@@ -1,0 +1,69 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-ast
+      - id: check-json
+      - id: check-yaml
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: requirements-txt-fixer
+      - id: sort-simple-yaml
+      - id: trailing-whitespace
+  - repo: https://github.com/psf/black
+    rev: 23.11.0
+    hooks:
+      - id: black
+        args:
+          - --config=pyproject.toml
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+        args:
+          - --settings-path=pyproject.toml
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.6
+    hooks:
+      - id: codespell
+        additional_dependencies:
+          - tomli
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.6.1"
+    hooks:
+      - id: mypy
+        args:
+          - --config-file=pyproject.toml
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v3.0.3"
+    hooks:
+      - id: prettier
+        files: \.[jt]sx?$
+        types_or: [css, javascript]
+  # - repo: https://github.com/pylint-dev/pylint
+  #   rev: v3.0.1
+  #   hooks:
+  #     - id: pylint
+  # - repo: local
+  #   hooks:
+  #     - id: pytest-check
+  #       stages: [push]
+  #       name: pytest-check
+  #       entry: pytest
+  #       language: system
+  #       pass_filenames: false
+  #       always_run: true
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [commit]
+ci:
+  autofix_commit_msg: "[pre-commit] autofix from pre-commit.com hooks"
+  autofix_prs: true
+  autoupdate_branch: ""
+  autoupdate_commit_msg: "[pre-commit] autoupdate"
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
