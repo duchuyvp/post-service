@@ -1,8 +1,8 @@
-import abc
-
 """
 This module contains the AbstractRepository class and its subclasses.
 """
+
+import abc
 
 import abc
 

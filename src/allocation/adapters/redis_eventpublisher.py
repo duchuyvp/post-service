@@ -1,3 +1,7 @@
+"""
+Module-level docstring describing the purpose of the module.
+"""
+
 import json
 import logging
 from dataclasses import asdict
@@ -7,9 +11,6 @@ import redis
 from allocation import config
 from allocation.domain import events
 
-"""
-Module-level docstring describing the purpose of the module.
-"""
 
 logger = logging.getLogger(__name__)
 

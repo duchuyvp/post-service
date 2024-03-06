@@ -1,13 +1,12 @@
+"""
+This module contains the handlers for post-related commands.
+"""
+
 import typing as t
 
 from allocation.domain import commands
 from allocation.domain import events
 from allocation.service_layer import unit_of_work
-
-
-"""
-This module contains the handlers for post-related commands.
-"""
 
 
 def create_post(cmd: commands.CommentPostCommand, uow: unit_of_work.AbstractUnitOfWork):

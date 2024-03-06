@@ -1,3 +1,7 @@
+"""
+This module contains the bootstrap function for the allocation application.
+"""
+
 import inspect
 import typing as t
 
@@ -6,10 +10,6 @@ from allocation.adapters import redis_eventpublisher
 from allocation.service_layer import handlers
 from allocation.service_layer import messagebus
 from allocation.service_layer import unit_of_work
-
-"""
-This module contains the bootstrap function for the allocation application.
-"""
 
 
 def bootstrap(
