@@ -27,11 +27,13 @@ class MessageBus:
         event_handlers: Dict[Type[events.Event], List[Callable]],
         command_handlers: Dict[Type[commands.Command], Callable],
     ):
+        """"""
         self.uow = uow
         self.event_handlers = event_handlers
         self.command_handlers = command_handlers
 
     def handle(self, message: Message):
+        """"""
         self.queue = [message]
         while self.queue:
             message = self.queue.pop(0)
@@ -43,6 +45,7 @@ class MessageBus:
                 raise Exception(f"{message} was not an Event or Command")
 
     def handle_event(self, event: events.Event):
+        """"""
         for handler in self.event_handlers[type(event)]:
             try:
                 logger.debug("handling event %s with handler %s", event, handler)
@@ -53,6 +56,7 @@ class MessageBus:
                 continue
 
     def handle_command(self, command: commands.Command):
+        """"""
         logger.debug("handling command %s", command)
         try:
             handler = self.command_handlers[type(command)]
