@@ -7,12 +7,27 @@ from allocation.service_layer import handlers
 from allocation.service_layer import messagebus
 from allocation.service_layer import unit_of_work
 
+"""
+This module contains the bootstrap function for the allocation application.
+"""
+
 
 def bootstrap(
     start_orm: bool = True,
     uow: unit_of_work.AbstractUnitOfWork = unit_of_work.SqlAlchemyUnitOfWork(),
     publish: t.Callable = redis_eventpublisher.publish,
 ) -> messagebus.MessageBus:
+    """
+    Bootstrap the allocation application.
+
+    Args:
+        start_orm: A boolean indicating whether to start the ORM.
+        uow: An instance of the unit of work.
+        publish: A callable for publishing events.
+
+    Returns:
+        An instance of the MessageBus.
+    """
     if start_orm:
         orm.start_mappers()
 
@@ -33,6 +48,17 @@ def bootstrap(
 
 
 def inject_dependencies(handler: t.Callable, dependencies: dict):
+    """
+    Inject dependencies into a handler.
+
+    Args:
+        handler: The handler to inject dependencies into.
+        dependencies: A dictionary of dependencies to inject.
+
+    Returns:
+        A new handler with the dependencies injected.
+    """
+
     params = inspect.signature(handler).parameters
     deps = {name: dependency for name, dependency in dependencies.items() if name in params}
     return lambda message: handler(message, **deps)

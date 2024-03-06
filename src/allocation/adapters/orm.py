@@ -8,5 +8,8 @@ logger = logging.getLogger(__name__)
 
 
 def start_mappers():
+    """
+    This method starts the mappers.
+    """
     logger.info("Starting mappers")
     print("Starting mappers")

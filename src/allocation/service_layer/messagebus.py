@@ -21,13 +21,15 @@ Message = Union[commands.Command, events.Event]
 
 
 class MessageBus:
+    """Handles messages and dispatches them to the appropriate handlers."""
+
     def __init__(
         self,
         uow: unit_of_work.AbstractUnitOfWork,
         event_handlers: Dict[Type[events.Event], List[Callable]],
         command_handlers: Dict[Type[commands.Command], Callable],
     ):
-        """"""
+        """Initializes the MessageBus with the given parameters."""
         self.uow = uow
         self.event_handlers = event_handlers
         self.command_handlers = command_handlers

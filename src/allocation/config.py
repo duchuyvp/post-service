@@ -2,8 +2,16 @@ import logging
 
 import pydantic_settings
 
+"""
+
+"""
+
 
 class Settings(pydantic_settings.BaseSettings):
+    """
+    Configuration settings for the application.
+    """
+
     model_config = pydantic_settings.SettingsConfigDict(
         env_file=".env",
         extra="ignore",
