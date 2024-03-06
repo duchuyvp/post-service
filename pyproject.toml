@@ -19,6 +19,7 @@ fastapi = "^0.110.0"
 sqlalchemy = "^2.0.27"
 pydantic-settings = "^2.2.1"
 redis = "^5.0.2"
+types-redis = "^4.6.0.20240218"
 
 [tool.black]
 color=true
