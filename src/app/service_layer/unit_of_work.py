@@ -1,18 +1,18 @@
-# pylint: disable=attribute-defined-outside-init
 from __future__ import annotations
 
 import abc
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
+from sqlalchemy import orm
+from sqlalchemy.orm import session
 
-from allocation import config
-from allocation.adapters import repository
+from src.app import config
+from src.app.adapters import repository
 
 
 class AbstractUnitOfWork(abc.ABC):
-    products: repository.AbstractRepository
+    posts: repository.AbstractRepository
+    comments: repository.AbstractRepository
 
     def __enter__(self) -> AbstractUnitOfWork:
         return self
@@ -24,9 +24,9 @@ class AbstractUnitOfWork(abc.ABC):
         self._commit()
 
     def collect_new_events(self):
-        for product in self.products.seen:
-            while product.events:
-                yield product.events.pop(0)
+        for post in self.posts.seen:
+            while post.events:
+                yield post.events.pop(0)
 
     @abc.abstractmethod
     def _commit(self):
@@ -37,7 +37,7 @@ class AbstractUnitOfWork(abc.ABC):
         raise NotImplementedError
 
 
-DEFAULT_SESSION_FACTORY = sessionmaker(
+DEFAULT_SESSION_FACTORY = orm.sessionmaker(
     bind=create_engine(
         config.settings.POSTGRES_URI,
         isolation_level="REPEATABLE READ",
@@ -50,8 +50,9 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.session_factory = session_factory
 
     def __enter__(self):
-        self.session = self.session_factory()  # type: Session
-        self.products = repository.SqlAlchemyRepository(self.session)
+        self.session = self.session_factory()
+        self.posts = repository.SqlAlchemyPostRepository(self.session)
+        self.comments = repository.SqlAlchemyCommentRepository(self.session)
         return super().__enter__()
 
     def __exit__(self, *args):

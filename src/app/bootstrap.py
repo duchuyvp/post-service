@@ -5,11 +5,11 @@ This module contains the bootstrap function for the allocation application.
 import inspect
 import typing as t
 
-from allocation.adapters import orm
-from allocation.adapters import redis_eventpublisher
-from allocation.service_layer import handlers
-from allocation.service_layer import messagebus
-from allocation.service_layer import unit_of_work
+from src.app.adapters import orm
+from src.app.adapters import redis_eventpublisher
+from src.app.service_layer import handlers
+from src.app.service_layer import messagebus
+from src.app.service_layer import unit_of_work
 
 
 def bootstrap(

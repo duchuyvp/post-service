@@ -2,22 +2,17 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable
-from typing import Dict
-from typing import List
-from typing import Type
-from typing import TYPE_CHECKING
-from typing import Union
+import typing as t
 
-from allocation.domain import commands
-from allocation.domain import events
+from src.app.domain import commands
+from src.app.domain import events
 
-if TYPE_CHECKING:
-    from . import unit_of_work
+if t.TYPE_CHECKING:
+    from src.app.service_layer import unit_of_work
 
 logger = logging.getLogger(__name__)
 
-Message = Union[commands.Command, events.Event]
+Message = commands.Command | events.Event
 
 
 class MessageBus:
@@ -26,8 +21,8 @@ class MessageBus:
     def __init__(
         self,
         uow: unit_of_work.AbstractUnitOfWork,
-        event_handlers: Dict[Type[events.Event], List[Callable]],
-        command_handlers: Dict[Type[commands.Command], Callable],
+        event_handlers: list[t.Type[events.Event], list[t.Callable]],
+        command_handlers: t.Dict[t.Type[commands.Command], t.Callable],
     ):
         """Initializes the MessageBus with the given parameters."""
         self.uow = uow

@@ -14,7 +14,7 @@ class CreatePostCommand(Command):
 
     title: str
     content: str
-    author_id: int
+    author_id: str
 
 
 class EditPostCommand(Command):
@@ -22,18 +22,19 @@ class EditPostCommand(Command):
     Command for editing an existing post.
     """
 
-    post_id: int
+    user_id: str
+    post_id: str
     title: str
     content: str
 
 
-class LikePostCommand(Command):
+class LikeUnlikePostCommand(Command):
     """
     Command for liking a post.
     """
 
-    post_id: int
-    user_id: int
+    post_id: str
+    user_id: str
 
 
 class CommentPostCommand(Command):
@@ -41,8 +42,8 @@ class CommentPostCommand(Command):
     Command for commenting on a post.
     """
 
-    post_id: int
-    user_id: int
+    post_id: str
+    user_id: str
     content: str
 
 
@@ -51,5 +52,15 @@ class DeletePostCommand(Command):
     Command for deleting a post.
     """
 
-    post_id: int
-    user_id: int
+    user_id: str
+    post_id: str
+
+
+class DeleteCommentCommand(Command):
+    """
+    Command for deleting a comment.
+    """
+
+    user_id: str
+    comment_id: str
+    post_id: str

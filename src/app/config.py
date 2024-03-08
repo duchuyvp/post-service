@@ -19,7 +19,7 @@ class Settings(pydantic_settings.BaseSettings):
         validate_assignment=True,
     )
 
-    POSTGRES_URI: str = "sqlite:///:memory:"
+    POSTGRES_URI: str = "postgresql://postgres:postgres@localhost:5432/db"
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
 

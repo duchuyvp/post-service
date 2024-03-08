@@ -19,6 +19,8 @@ fastapi = "^0.110.0"
 sqlalchemy = "^2.0.27"
 pydantic-settings = "^2.2.1"
 redis = "^5.0.2"
+uvicorn = "^0.27.1"
+psycopg2 = "^2.9.9"
 
 [tool.black]
 color=true
