@@ -31,6 +31,7 @@ posts = sa.Table(
     sa.Column("id", sa.String, primary_key=True),
     sa.Column("title", sa.String),
     sa.Column("content", sa.String),
+    sa.Column("likes", sa.ARRAY(sa.String), default=[]),
     sa.Column("created_at", sa.DateTime),
     sa.Column("updated_at", sa.DateTime),
     sa.Column("version", sa.Integer),
@@ -42,6 +43,6 @@ def start_mappers():
     """
     This method starts the mappers.
     """
-    logger.info("Starting mappers")
+    # logger.info("Starting mappers")
     mapper_registry.map_imperatively(model.Post, posts)
     mapper_registry.map_imperatively(model.Comment, comments)

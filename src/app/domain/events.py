@@ -7,29 +7,24 @@ class Event(pydantic.BaseModel):
     """
 
 
-class PostCreated(Event):
+class PostCreatedEvent(Event):
     """
     Event representing the creation of a post.
     """
 
     post_id: str
-    title: str
-    content: str
-    author_id: str
 
 
-class PostEdited(Event):
+class PostEditedEvent(Event):
     """
     Event representing the editing of a post.
     """
 
     post_id: str
-    title: str
-    content: str
     version: int
 
 
-class PostDeleted(Event):
+class PostDeletedEvent(Event):
     """
     Event representing the deletion of a post.
     """
@@ -37,7 +32,7 @@ class PostDeleted(Event):
     post_id: str
 
 
-class PostLiked(Event):
+class PostLikedEvent(Event):
     """
     Event representing a like on a post.
     """
@@ -46,7 +41,7 @@ class PostLiked(Event):
     user_id: str
 
 
-class PostUnliked(Event):
+class PostUnlikedEvent(Event):
     """
     Event representing an unlike on a post.
     """
@@ -55,18 +50,16 @@ class PostUnliked(Event):
     user_id: str
 
 
-class CommentCreated(Event):
+class CommentCreatedEvent(Event):
     """
     Event representing a comment on a post.
     """
 
     comment_id: str
     post_id: str
-    user_id: str
-    content: str
 
 
-class CommentDeleted(Event):
+class CommentDeletedEvent(Event):
     """
     Event representing the deletion of a comment.
     """
@@ -74,7 +67,7 @@ class CommentDeleted(Event):
     comment_id: str
 
 
-class PostActionDenied(Event):
+class PostActionDeniedEvent(Event):
     """
     Event representing a denial of edit or delete a post.
     """
@@ -83,7 +76,7 @@ class PostActionDenied(Event):
     user_id: str
 
 
-class CommentActionDenied(Event):
+class CommentActionDeniedEvent(Event):
     """
     Event representing a denial of a comment delete.
     """

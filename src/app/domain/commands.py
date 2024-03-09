@@ -63,4 +63,3 @@ class DeleteCommentCommand(Command):
 
     user_id: str
     comment_id: str
-    post_id: str

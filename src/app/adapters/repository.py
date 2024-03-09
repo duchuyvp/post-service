@@ -22,11 +22,11 @@ class AbstractRepository(abc.ABC):
         self._add(rc)
         self.seen.add(rc)
 
-    def get(self, _id: str) -> model.Table:
+    def get(self, id: str) -> model.Table:
         """
         Get a record from the repository by ID.
         """
-        rc = self._get(_id)
+        rc = self._get(id)
         if rc:
             self.seen.add(rc)
         return rc
@@ -53,7 +53,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _get(self, _id):
+    def _get(self, id):
         """
         Abstract method to get a record from the repository by ID.
         """
@@ -92,17 +92,17 @@ class SqlAlchemyPostRepository(AbstractRepository):
         """
         Get a post from the SQL Alchemy repository by ID.
         """
-        return self.session.query(model.Post).filter_by(_id=post_id).first()
+        return self.session.query(model.Post).filter_by(id=post_id).first()
 
     def _edit(self, post: model.Post, _new: dict) -> None:
         """
         Edit a post in the SQL Alchemy repository.
         """
 
-        post._title = _new["title"]
-        post._content = _new["content"]
-        post._version += 1
-        post._updated_at = datetime.datetime.now()
+        post.title = _new["title"]
+        post.content = _new["content"]
+        post.version += 1
+        post.updated_at = datetime.datetime.now()
 
     def _delete(self, post: model.Post) -> None:
         """
@@ -130,7 +130,7 @@ class SqlAlchemyCommentRepository(AbstractRepository):
         """
         Get a comment from the SQL Alchemy repository by ID.
         """
-        return self.session.query(model.Comment).filter_by(_id=comment_id).first()
+        return self.session.query(model.Comment).filter_by(id=comment_id).first()
 
     def _delete(self, comment: model.Comment):
         """
