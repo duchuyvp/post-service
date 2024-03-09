@@ -39,7 +39,7 @@ class Post(Table):
         self.content = content
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()
-        self.version = 0
+        self.version = 1
         self.author_id = author_id
         self.likes = []  # type: list[str]
         self.events = []  # type: list[events.Event]

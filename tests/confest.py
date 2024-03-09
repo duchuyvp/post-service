@@ -18,19 +18,7 @@ pytest.register_assert_rewrite("tests.e2e.api_client")
 
 
 @pytest.fixture
-def in_memory_sqlite_db():
-    engine = sa.create_engine("sqlite:///:memory:")
+def sqlite_session_factory():
+    engine = sa.create_engine("postgresql://postgres:postgres@localhost:5432/testdb")
     orm.mapper_registry.metadata.create_all(engine)
-    return engine
-
-
-@pytest.fixture
-def sqlite_session_factory(in_memory_sqlite_db):
-    yield sessionmaker(bind=in_memory_sqlite_db)
-
-
-@pytest.fixture
-def mappers():
-    orm.start_mappers()
-    yield
-    clear_mappers()
+    yield sessionmaker(bind=engine)
