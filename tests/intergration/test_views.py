@@ -5,23 +5,23 @@ from src.app.domain import commands
 from src.app.service_layer import unit_of_work
 from sqlalchemy.orm import clear_mappers
 from tests import fake
-from tests.confest import sqlite_session_factory
+from tests.confest import sql_session_factory
 from src.app import bootstrap
 
 
 @pytest.fixture
-def sqlite_bus(sqlite_session_factory):
+def bus(sql_session_factory):
     bus = bootstrap.bootstrap(
         start_orm=True,
-        uow=unit_of_work.SqlAlchemyUnitOfWork(sqlite_session_factory),
+        uow=unit_of_work.SqlAlchemyUnitOfWork(sql_session_factory),
     )
     yield bus
     clear_mappers()
 
 
-def test_get_post(sqlite_bus):
+def test_get_post(bus):
     unique_title = str(uuid.uuid4())
-    sqlite_bus.handle(
+    bus.handle(
         commands.CreatePostCommand(
             title=unique_title,
             content="test content",
@@ -29,7 +29,7 @@ def test_get_post(sqlite_bus):
         )
     )
 
-    posts = views.find_post(unique_title, sqlite_bus.uow)
+    posts = views.find_post(unique_title, bus.uow)
 
     assert len(posts) == 1
     assert posts[0]["title"] == unique_title
@@ -38,9 +38,9 @@ def test_get_post(sqlite_bus):
 
 
 @pytest.fixture
-def post(sqlite_bus):
+def post(bus):
     unique_title = str(uuid.uuid4())
-    sqlite_bus.handle(
+    bus.handle(
         commands.CreatePostCommand(
             title=unique_title,
             content="test content",
@@ -48,14 +48,14 @@ def post(sqlite_bus):
         )
     )
 
-    post = views.find_post(unique_title, sqlite_bus.uow)[0]
+    post = views.find_post(unique_title, bus.uow)[0]
 
     return post
 
 
 @pytest.fixture
-def comment(sqlite_bus, post):
-    sqlite_bus.handle(
+def comment(bus, post):
+    bus.handle(
         commands.CommentPostCommand(
             post_id=post["id"],
             content="test comment",
@@ -63,39 +63,39 @@ def comment(sqlite_bus, post):
         )
     )
 
-    comments = views.get_comments(post["id"], sqlite_bus.uow)
+    comments = views.get_comments(post["id"], bus.uow)
 
     return comments[0]
 
 
-def test_delete_post(sqlite_bus, post):
-    sqlite_bus.handle(
+def test_delete_post(bus, post):
+    bus.handle(
         commands.DeletePostCommand(
             user_id=post["author_id"],
             post_id=post["id"],
         )
     )
 
-    posts = views.find_post(post["id"], sqlite_bus.uow)
+    posts = views.find_post(post["id"], bus.uow)
 
     assert len(posts) == 0
 
 
-def test_like_post(sqlite_bus, post):
-    sqlite_bus.handle(
+def test_like_post(bus, post):
+    bus.handle(
         commands.LikeUnlikePostCommand(
             post_id=post["id"],
             user_id="test_user_id_like",
         )
     )
 
-    post = views.get_post(post["id"], sqlite_bus.uow)
+    post = views.get_post(post["id"], bus.uow)
 
     assert len(post["likes"]) == 0  # because it not implemented yet
 
 
-def test_comment_post(sqlite_bus, post):
-    sqlite_bus.handle(
+def test_comment_post(bus, post):
+    bus.handle(
         commands.CommentPostCommand(
             post_id=post["id"],
             user_id="test_comment_user_id",
@@ -103,7 +103,7 @@ def test_comment_post(sqlite_bus, post):
         )
     )
 
-    comments = views.get_comments(post["id"], sqlite_bus.uow)
+    comments = views.get_comments(post["id"], bus.uow)
 
     assert len(comments) == 1
     assert comments[0]["content"] == "test comment"
@@ -111,22 +111,22 @@ def test_comment_post(sqlite_bus, post):
     assert comments[0]["post_id"] == post["id"]
 
 
-def test_delete_comment(sqlite_bus, comment):
-    sqlite_bus.handle(
+def test_delete_comment(bus, comment):
+    bus.handle(
         commands.DeleteCommentCommand(
             user_id=comment["author_id"],
             comment_id=comment["id"],
         )
     )
 
-    comments = views.get_comments(comment["post_id"], sqlite_bus.uow)
+    comments = views.get_comments(comment["post_id"], bus.uow)
 
     assert len(comments) == 0
 
 
-def test_edit_post(sqlite_bus, post):
+def test_edit_post(bus, post):
     new_title_unique = str(uuid.uuid4())
-    sqlite_bus.handle(
+    bus.handle(
         commands.EditPostCommand(
             user_id=post["author_id"],
             post_id=post["id"],
@@ -135,7 +135,7 @@ def test_edit_post(sqlite_bus, post):
         )
     )
 
-    posts = views.find_post(new_title_unique, sqlite_bus.uow)
+    posts = views.find_post(new_title_unique, bus.uow)
 
     assert len(posts) == 1
     assert posts[0]["title"] == new_title_unique

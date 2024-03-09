@@ -6,7 +6,7 @@ import inspect
 import typing as t
 
 from src.app.adapters import orm
-from src.app.adapters import redis_eventpublisher
+from app.adapters import redis_event_publisher
 from src.app.service_layer import handlers
 from src.app.service_layer import messagebus
 from src.app.service_layer import unit_of_work
