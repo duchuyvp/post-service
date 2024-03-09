@@ -6,7 +6,6 @@ import inspect
 import typing as t
 
 from src.app.adapters import orm
-from app.adapters import redis_event_publisher
 from src.app.service_layer import handlers
 from src.app.service_layer import messagebus
 from src.app.service_layer import unit_of_work
@@ -29,6 +28,9 @@ def bootstrap(
     """
     if start_orm:
         orm.start_mappers()
+
+    if isinstance(uow, type):
+        uow = uow()
 
     dependencies = {"uow": uow}
     injected_event_handlers = {

@@ -131,8 +131,8 @@ def handle_permission_denied(events: events.Event, uow: unit_of_work.AbstractUni
     Handle the permission denied event.
     """
 
-    uow.rollback()
-    raise PermissionError(f"Permission denied for {events.__class__.__name__} event.")
+    # raise PermissionError(f"Permission denied for {events.__class__.__name__} event.")
+    # Notification.send(f"Permission denied for {events.__class__.__name__} event.")
 
 
 EVENT_HANDLERS = {
