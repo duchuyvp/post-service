@@ -45,6 +45,14 @@ class AbstractRepository(abc.ABC):
         self._delete(rc)
         self.seen.remove(rc)
 
+    def query(self, **kwargs) -> list[model.Table]:
+        """
+        Query the repository.
+        """
+        rcs = self._query(**kwargs)
+        self.seen.update(rcs)
+        return rcs
+
     @abc.abstractmethod
     def _add(self, rc: model.Table):
         """
@@ -70,6 +78,13 @@ class AbstractRepository(abc.ABC):
     def _delete(self, rc: model.Table):
         """
         Abstract method to delete a record from the repository.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _query(self, **kwargs):
+        """
+        Abstract method to query the repository.
         """
         raise NotImplementedError
 
@@ -110,6 +125,12 @@ class SqlAlchemyPostRepository(AbstractRepository):
         """
         self.session.delete(post)
 
+    def _query(self, **kwargs):
+        """
+        Query the SQL Alchemy repository.
+        """
+        return self.session.query(model.Post).filter_by(**kwargs).all()
+
 
 class SqlAlchemyCommentRepository(AbstractRepository):
 
@@ -143,3 +164,9 @@ class SqlAlchemyCommentRepository(AbstractRepository):
         Edit a comment in the SQL Alchemy repository.
         """
         raise NotImplementedError
+
+    def _query(self, **kwargs):
+        """
+        Query the SQL Alchemy repository.
+        """
+        return self.session.query(model.Comment).filter_by(**kwargs).all()

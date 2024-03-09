@@ -15,7 +15,6 @@ from src.app.service_layer import unit_of_work
 def bootstrap(
     start_orm: bool = True,
     uow: unit_of_work.AbstractUnitOfWork = unit_of_work.SqlAlchemyUnitOfWork(),
-    publish: t.Callable = redis_eventpublisher.publish,
 ) -> messagebus.MessageBus:
     """
     Bootstrap the allocation application.
@@ -31,7 +30,7 @@ def bootstrap(
     if start_orm:
         orm.start_mappers()
 
-    dependencies = {"uow": uow, "publish": publish}
+    dependencies = {"uow": uow}
     injected_event_handlers = {
         event_type: [inject_dependencies(handler, dependencies) for handler in event_handlers]
         for event_type, event_handlers in handlers.EVENT_HANDLERS.items()

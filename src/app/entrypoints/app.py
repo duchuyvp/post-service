@@ -78,7 +78,7 @@ def like_post(post_id: str, user_id: str = fastapi.Header(...)):
     return {"message": "post liked"}
 
 
-@app.post("/posts/{post_id}/comment")
+@app.post("/posts/{post_id}/comments")
 def comment_post(post_id: str, request: CommentRequest, user_id: str = fastapi.Header(...)):
     """
     Comment a post.
@@ -105,3 +105,12 @@ def delete_comment(comment_id: str, user_id: str = fastapi.Header(...)):
     bus.handle(cmd)
 
     return {"message": "comment deleted"}
+
+
+@app.get("/posts/{post_id}/comments")
+def get_comments(post_id: str):
+    """
+    Get comments of a post.
+    """
+    comments = views.get_comments(post_id=post_id, uow=bus.uow)
+    return comments
