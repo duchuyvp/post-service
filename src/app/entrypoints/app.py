@@ -22,89 +22,89 @@ def create_post(request: CreatePostRequest, user_id: str = fastapi.Header(...)):
     )
     bus.handle(cmd)
 
-    return {"message": "post created"}
+    return fastapi.Response(status_code=201)
 
 
-@app.get("/posts/{post_id}")
-def get_post(post_id: str) -> PostResponse:
+@app.get("/posts/{id}")
+def get_post(id: str) -> PostResponse:
     """
     Get a post by its id.
     """
-    post = views.get_post(post_id=post_id, uow=bus.uow)
+    post = views.get_post(post_id=id, uow=bus.uow)
     return post
 
 
-@app.put("/posts/{post_id}")
-def edit_post(post_id: str, request: CreatePostRequest, user_id: str = fastapi.Header(...)):
+@app.put("/posts/{id}")
+def edit_post(id: str, request: CreatePostRequest, user_id: str = fastapi.Header(...)):
     """
     Edit a post.
     """
     cmd = commands.EditPostCommand(
         user_id=user_id,
-        post_id=post_id,
+        post_id=id,
         title=request.title,
         content=request.content,
     )
     bus.handle(cmd)
 
-    return {"message": "post edited"}
+    return fastapi.Response(status_code=204)
 
 
-@app.delete("/posts/{post_id}")
-def delete_post(post_id: str, user_id: str = fastapi.Header(...)):
+@app.delete("/posts/{id}")
+def delete_post(id: str, user_id: str = fastapi.Header(...)):
     """
     Delete a post.
     """
     cmd = commands.DeletePostCommand(
         user_id=user_id,
-        post_id=post_id,
+        post_id=id,
     )
     bus.handle(cmd)
 
-    return {"message": "post deleted"}
+    return fastapi.Response(status_code=204)
 
 
-@app.post("/posts/{post_id}/like")
-def like_post(post_id: str, user_id: str = fastapi.Header(...)):
+@app.post("/posts/{id}/like")
+def like_post(id: str, user_id: str = fastapi.Header(...)):
     """
     Like a post.
     """
     cmd = commands.LikeUnlikePostCommand(
         user_id=user_id,
-        post_id=post_id,
+        post_id=id,
     )
     bus.handle(cmd)
 
-    return {"message": "post liked"}
+    return fastapi.Response(status_code=204)
 
 
-@app.post("/posts/{post_id}/comments")
-def comment_post(post_id: str, request: CommentRequest, user_id: str = fastapi.Header(...)):
+@app.post("/posts/{id}/comments")
+def comment_post(id: str, request: CommentRequest, user_id: str = fastapi.Header(...)):
     """
     Comment a post.
     """
     cmd = commands.CommentPostCommand(
         user_id=user_id,
-        post_id=post_id,
+        post_id=id,
         content=request.content,
     )
     bus.handle(cmd)
 
-    return {"message": "comment created"}
+    return fastapi.Response(status_code=201)
 
 
-@app.delete("/comments/{comment_id}")
-def delete_comment(comment_id: str, user_id: str = fastapi.Header(...)):
+@app.delete("/comments/{id}")
+def delete_comment(id: str, user_id: str = fastapi.Header(...)):
     """
     Delete a comment.
     """
     cmd = commands.DeleteCommentCommand(
         user_id=user_id,
-        comment_id=comment_id,
+        comment_id=id,
     )
     bus.handle(cmd)
 
-    return {"message": "comment deleted"}
+    return fastapi.Response(status_code=204)
 
 
 @app.get("/posts/{post_id}/comments")
