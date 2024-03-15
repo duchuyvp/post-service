@@ -1,8 +1,10 @@
+import json
 import logging
 
 import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.orm import registry
+from src.app.adapters import orm_helper
 
 from src.app.domain import model
 
@@ -18,8 +20,8 @@ comments = sa.Table(
     sa.Column("id", sa.String, primary_key=True),
     sa.Column("post_id", sa.String, sa.ForeignKey("posts.id")),
     sa.Column("content", sa.String),
-    sa.Column("created_at", sa.DateTime),
-    sa.Column("updated_at", sa.DateTime),
+    sa.Column("created_at", sa.TIMESTAMP),
+    sa.Column("updated_at", sa.TIMESTAMP),
     sa.Column("version", sa.Integer),
     sa.Column("author_id", sa.String),
 )
@@ -31,9 +33,9 @@ posts = sa.Table(
     sa.Column("id", sa.String, primary_key=True),
     sa.Column("title", sa.String),
     sa.Column("content", sa.String),
-    sa.Column("likes", sa.ARRAY(sa.String), default=[]),
-    sa.Column("created_at", sa.DateTime),
-    sa.Column("updated_at", sa.DateTime),
+    sa.Column("likes", orm_helper.JSONArray, default=[]),
+    sa.Column("created_at", sa.TIMESTAMP),
+    sa.Column("updated_at", sa.TIMESTAMP),
     sa.Column("version", sa.Integer),
     sa.Column("author_id", sa.String),
 )
