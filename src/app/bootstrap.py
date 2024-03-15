@@ -13,7 +13,7 @@ from src.app.service_layer import unit_of_work
 
 def bootstrap(
     start_orm: bool = True,
-    uow: unit_of_work.AbstractUnitOfWork = unit_of_work.SqlAlchemyUnitOfWork(),
+    uow: unit_of_work.AbstractUnitOfWork | t.Type[unit_of_work.AbstractUnitOfWork] = unit_of_work.SqlAlchemyUnitOfWork(),
 ) -> messagebus.MessageBus:
     """
     Bootstrap the allocation application.
