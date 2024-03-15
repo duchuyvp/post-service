@@ -19,3 +19,9 @@ class PostResponse(pydantic.BaseModel):
 
 class CommentRequest(pydantic.BaseModel):
     content: str
+
+
+class CommentResponse(pydantic.BaseModel):
+    content: str
+    author_id: str
+    created_at: str

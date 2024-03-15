@@ -4,14 +4,14 @@ from src.app import bootstrap
 from src.app.domain import commands
 from src.app.entrypoints import depends
 
-from src.app.entrypoints.schema import CommentRequest, CreatePostRequest, PostResponse
+from src.app.entrypoints import schema
 
 app = fastapi.FastAPI(dependencies=[fastapi.Depends(depends.authorise_user)])
 bus = bootstrap.bootstrap()
 
 
-@app.post("/posts")
-def create_post(request: CreatePostRequest, user_id: str = fastapi.Header(...)):
+@app.post("/posts", status_code=fastapi.status.HTTP_201_CREATED)
+def create_post(request: schema.CreatePostRequest, user_id: str = fastapi.Header(...)):
     """
     Create a post.
     """
@@ -26,7 +26,7 @@ def create_post(request: CreatePostRequest, user_id: str = fastapi.Header(...)):
 
 
 @app.get("/posts/{id}")
-def get_post(id: str) -> PostResponse:
+def get_post(id: str) -> schema.PostResponse:
     """
     Get a post by its id.
     """
@@ -34,8 +34,8 @@ def get_post(id: str) -> PostResponse:
     return post
 
 
-@app.put("/posts/{id}")
-def edit_post(id: str, request: CreatePostRequest, user_id: str = fastapi.Header(...)):
+@app.put("/posts/{id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
+def edit_post(id: str, request: schema.CreatePostRequest, user_id: str = fastapi.Header(...)):
     """
     Edit a post.
     """
@@ -50,7 +50,7 @@ def edit_post(id: str, request: CreatePostRequest, user_id: str = fastapi.Header
     return fastapi.Response(status_code=204)
 
 
-@app.delete("/posts/{id}")
+@app.delete("/posts/{id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
 def delete_post(id: str, user_id: str = fastapi.Header(...)):
     """
     Delete a post.
@@ -64,7 +64,7 @@ def delete_post(id: str, user_id: str = fastapi.Header(...)):
     return fastapi.Response(status_code=204)
 
 
-@app.post("/posts/{id}/like")
+@app.post("/posts/{id}/like", status_code=fastapi.status.HTTP_204_NO_CONTENT)
 def like_post(id: str, user_id: str = fastapi.Header(...)):
     """
     Like a post.
@@ -78,8 +78,8 @@ def like_post(id: str, user_id: str = fastapi.Header(...)):
     return fastapi.Response(status_code=204)
 
 
-@app.post("/posts/{id}/comments")
-def comment_post(id: str, request: CommentRequest, user_id: str = fastapi.Header(...)):
+@app.post("/posts/{id}/comments", status_code=fastapi.status.HTTP_201_CREATED)
+def comment_post(id: str, request: schema.CommentRequest, user_id: str = fastapi.Header(...)):
     """
     Comment a post.
     """
@@ -93,7 +93,7 @@ def comment_post(id: str, request: CommentRequest, user_id: str = fastapi.Header
     return fastapi.Response(status_code=201)
 
 
-@app.delete("/comments/{id}")
+@app.delete("/comments/{id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
 def delete_comment(id: str, user_id: str = fastapi.Header(...)):
     """
     Delete a comment.
@@ -108,7 +108,7 @@ def delete_comment(id: str, user_id: str = fastapi.Header(...)):
 
 
 @app.get("/posts/{post_id}/comments")
-def get_comments(post_id: str):
+def get_comments(post_id: str) -> list[schema.CommentResponse]:
     """
     Get comments of a post.
     """
