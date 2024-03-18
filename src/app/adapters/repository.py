@@ -4,6 +4,7 @@ This module contains the AbstractRepository class and its subclasses.
 
 import abc
 import datetime
+
 from src.app.adapters import orm
 from src.app.domain import model
 

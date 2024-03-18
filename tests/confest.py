@@ -6,13 +6,13 @@ from pathlib import Path
 import pytest
 import redis
 import requests
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, clear_mappers
-
 import sqlalchemy as sa
+from sqlalchemy import create_engine
+from sqlalchemy.orm import clear_mappers
+from sqlalchemy.orm import sessionmaker
 
-from src.app.adapters import orm
 from src.app import config
+from src.app.adapters import orm
 
 pytest.register_assert_rewrite("tests.e2e.api_client")
 

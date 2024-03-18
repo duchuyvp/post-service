@@ -1,5 +1,6 @@
-import sqlalchemy as sa
 import json
+
+import sqlalchemy as sa
 
 
 class JSONArray(sa.TypeDecorator):

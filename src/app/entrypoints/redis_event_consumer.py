@@ -1,8 +1,10 @@
 import json
 import logging
+
 import redis
 
-from src.app import bootstrap, config
+from src.app import bootstrap
+from src.app import config
 from src.app.domain import commands
 
 logger = logging.getLogger(__name__)
