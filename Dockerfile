@@ -8,4 +8,3 @@ COPY pyproject.toml /pyproject.toml
 COPY src/ /src/
 RUN poetry install
 COPY tests/ /tests/
-

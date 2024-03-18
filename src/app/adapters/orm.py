@@ -4,8 +4,8 @@ import logging
 import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.orm import registry
-from src.app.adapters import orm_helper
 
+from src.app.adapters import orm_helper
 from src.app.domain import model
 
 logger = logging.getLogger(__name__)

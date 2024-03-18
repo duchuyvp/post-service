@@ -3,6 +3,7 @@ This module contains the handlers for post-related commands.
 """
 
 from __future__ import annotations
+
 import typing as t
 
 from src.app.domain import commands

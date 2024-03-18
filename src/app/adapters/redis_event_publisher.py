@@ -11,7 +11,6 @@ import redis
 from src.app import config
 from src.app.domain import events
 
-
 logger = logging.getLogger(__name__)
 
 r = redis.Redis(host=config.settings.REDIS_HOST, port=config.settings.REDIS_PORT, db=0)

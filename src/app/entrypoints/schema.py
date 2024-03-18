@@ -1,5 +1,5 @@
-import pydantic
 import fastapi
+import pydantic
 
 
 class CreatePostRequest(pydantic.BaseModel):

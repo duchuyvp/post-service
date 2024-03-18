@@ -1,12 +1,14 @@
 import uuid
+
 import pytest
+from sqlalchemy.orm import clear_mappers
+
+from src.app import bootstrap
 from src.app import views
 from src.app.domain import commands
 from src.app.service_layer import unit_of_work
-from sqlalchemy.orm import clear_mappers
 from tests import fake
 from tests.confest import sql_session_factory
-from src.app import bootstrap
 
 
 @pytest.fixture
