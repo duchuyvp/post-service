@@ -49,7 +49,7 @@ def like_unlike_post(cmd: commands.LikeUnlikePostCommand, uow: unit_of_work.Abst
 
     with uow:
         post = uow.posts.get(cmd.post_id)
-        post.like_unlike(user_id=cmd.user_id)  # TODO: notworking, don't know why
+        post.like_unlike(user_id=cmd.user_id)
         uow.commit()
         if cmd.user_id in post.likes:
             post.events.append(events.PostLikedEvent(post_id=cmd.post_id, user_id=cmd.user_id))
@@ -110,10 +110,6 @@ def handle_post_created(events: events.PostCreatedEvent, uow: unit_of_work.Abstr
     """
     Handle the post created event.
     """
-
-    with uow:
-        post = uow.posts.get(events.post_id)
-        return post.model_dump()
 
 
 def handle_comment_created(events: events.CommentCreatedEvent, uow: unit_of_work.AbstractUnitOfWork):

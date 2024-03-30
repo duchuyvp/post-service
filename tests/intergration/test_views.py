@@ -91,7 +91,7 @@ def test_like_post(bus, post):
 
     post = views.get_post(post["id"], bus.uow)
 
-    assert len(post["likes"]) == 0  # because it not implemented yet
+    assert len(post["likes"]) == 1  # because it not implemented yet
 
 
 def test_comment_post(bus, post):
