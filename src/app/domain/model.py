@@ -137,7 +137,7 @@ class Post(Table):
         self.updated_at = datetime.datetime.now()
         self.version = 1
         self.author_id = author_id
-        self.likes = []  # type: list[str]
+        self.likes = []  # type: list[Like]
         self.comments = []  # type: list[Comment]
         self.events = []  # type: list[events.Event]
 
