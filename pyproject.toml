@@ -141,3 +141,13 @@ disable = [
 
 [tool.pylint.basic]
 no-docstring-rgx = "(^_|test_)"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "W", "Q", "I"]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 20

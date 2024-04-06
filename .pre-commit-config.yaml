@@ -13,19 +13,19 @@ repos:
       - id: requirements-txt-fixer
       - id: sort-simple-yaml
       - id: trailing-whitespace
-  - repo: https://github.com/psf/black
-    rev: 24.3.0
-    hooks:
-      - id: black
-        args:
-          - --config=pyproject.toml
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        name: isort (python)
-        args:
-          - --settings-path=pyproject.toml
+  # - repo: https://github.com/psf/black
+  #   rev: 23.11.0
+  #   hooks:
+  #     - id: black
+  #       args:
+  #         - --config=pyproject.toml
+  # - repo: https://github.com/pycqa/isort
+  #   rev: 5.12.0
+  #   hooks:
+  #     - id: isort
+  #       name: isort (python)
+  #       args:
+  #         - --settings-path=pyproject.toml
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.6
     hooks:
@@ -33,21 +33,27 @@ repos:
         additional_dependencies:
           - tomli
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.9.0"
+    rev: "v1.6.1"
     hooks:
       - id: mypy
         args:
           - --config-file=pyproject.toml
           - --install-types
           - --non-interactive
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v4.0.0-alpha.8"
+  # - repo: https://github.com/pre-commit/mirrors-prettier
+  #   rev: "v3.0.3"
+  #   hooks:
+  #     - id: prettier
+  # - repo: https://github.com/pylint-dev/pylint
+  #   rev: v3.0.1
+  #   hooks:
+  #     - id: pylint
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.5
     hooks:
-      - id: prettier
-  - repo: https://github.com/pylint-dev/pylint
-    rev: v3.1.0
-    hooks:
-      - id: pylint
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
   # - repo: local
   #   hooks:
   #     - id: pytest-check
