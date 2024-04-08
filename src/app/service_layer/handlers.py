@@ -4,11 +4,7 @@ This module contains the handlers for post-related commands.
 
 from __future__ import annotations
 
-import typing as t
-
-from src.app.domain import commands
-from src.app.domain import events
-from src.app.domain import model
+from src.app.domain import commands, events, model
 from src.app.service_layer import unit_of_work
 
 
@@ -40,7 +36,9 @@ def edit_post(cmd: commands.EditPostCommand, uow: unit_of_work.AbstractUnitOfWor
             uow.commit()
             post.events.append(events.PostEditedEvent(post_id=cmd.post_id, version=post.version))
         else:
-            post.events.append(events.PostActionDeniedEvent(post_id=cmd.post_id, user_id=cmd.user_id))
+            post.events.append(
+                events.PostActionDeniedEvent(post_id=cmd.post_id, user_id=cmd.user_id)
+            )
 
 
 def like_unlike_post(cmd: commands.LikeUnlikePostCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -83,7 +81,9 @@ def delete_post(cmd: commands.DeletePostCommand, uow: unit_of_work.AbstractUnitO
             uow.commit()
             post.events.append(events.PostDeletedEvent(post_id=cmd.post_id))
         else:
-            post.events.append(events.PostActionDeniedEvent(post_id=cmd.post_id, user_id=cmd.user_id))
+            post.events.append(
+                events.PostActionDeniedEvent(post_id=cmd.post_id, user_id=cmd.user_id)
+            )
 
 
 def delete_comment(cmd: commands.DeleteCommentCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -98,7 +98,9 @@ def delete_comment(cmd: commands.DeleteCommentCommand, uow: unit_of_work.Abstrac
             uow.commit()
             comment.events.append(events.CommentDeletedEvent(comment_id=cmd.comment_id))
         else:
-            comment.events.append(events.CommentActionDeniedEvent(comment_id=cmd.comment_id, user_id=cmd.user_id))
+            comment.events.append(
+                events.CommentActionDeniedEvent(comment_id=cmd.comment_id, user_id=cmd.user_id)
+            )
 
 
 def do_nothing(events: events.Event, uow: unit_of_work.AbstractUnitOfWork):
@@ -113,7 +115,9 @@ def handle_post_created(events: events.PostCreatedEvent, uow: unit_of_work.Abstr
     """
 
 
-def handle_comment_created(events: events.CommentCreatedEvent, uow: unit_of_work.AbstractUnitOfWork):
+def handle_comment_created(
+    events: events.CommentCreatedEvent, uow: unit_of_work.AbstractUnitOfWork
+):
     """
     Handle the comment created event.
     """

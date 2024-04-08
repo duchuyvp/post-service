@@ -4,11 +4,6 @@ import abc
 import datetime
 import uuid
 
-import pydantic
-
-from src.app.domain import commands
-from src.app.domain import events
-
 
 class Table:
     """
