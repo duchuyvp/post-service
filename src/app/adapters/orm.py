@@ -69,14 +69,15 @@ def start_mappers() -> None:
                 argument=comment_mapper,
                 backref="post",
                 collection_class=list,
-                lazy="subquery",
+                lazy="select",
             ),
             "likes": orm.relationship(
                 argument=like_mapper,
                 backref="post",
                 collection_class=list,
-                lazy="subquery",
+                lazy="select",
             ),
+            "like_count": orm.column_property(sa.func.count("likes").label("like_count")),
         },
     )
 

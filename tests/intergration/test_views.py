@@ -90,7 +90,8 @@ def test_like_post(bus, post):
 
     post = views.get_post(post["id"], bus.uow)
 
-    assert len(post["likes"]) == 1
+    # assert len(post["likes"]) == 1
+    assert post["like_count"] == 1
 
     bus.handle(
         commands.LikeUnlikePostCommand(
@@ -101,7 +102,8 @@ def test_like_post(bus, post):
 
     post = views.get_post(post["id"], bus.uow)
 
-    assert len(post["likes"]) == 2
+    # assert len(post["likes"]) == 2
+    assert post["like_count"] == 2
 
     bus.handle(
         commands.LikeUnlikePostCommand(
@@ -112,7 +114,8 @@ def test_like_post(bus, post):
 
     post = views.get_post(post["id"], bus.uow)
 
-    assert len(post["likes"]) == 1
+    # assert len(post["likes"]) == 1
+    assert post["like_count"] == 1
 
 
 def test_comment_post(bus, post):

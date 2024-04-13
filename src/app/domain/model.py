@@ -72,11 +72,10 @@ class Comment(Table):
         content: str,
         author_id: str,
         post_id: str,
-        created_at: datetime.datetime = datetime.datetime.now(),
     ):
         self.id = str(uuid.uuid4())
         self.content = content
-        self.created_at = created_at
+        self.created_at = datetime.datetime.now()
         self.post_id = post_id
         self.author_id = author_id
         self.events = []  # type: list[events.Event]
@@ -135,6 +134,7 @@ class Post(Table):
         self.updated_at = datetime.datetime.now()
         self.version = 1
         self.author_id = author_id
+        self.like_count = 0
         self.likes = []  # type: list[Like]
         self.comments = []  # type: list[Comment]
         self.events = []  # type: list[events.Event]
@@ -189,6 +189,7 @@ class Post(Table):
             "content": self.content,
             "created_at": self.created_at.isoformat(),
             "author_id": self.author_id,
-            "likes": self.likes,
+            # "likes": self.likes,
+            "like_count": self.like_count,
             "version": self.version,
         }
