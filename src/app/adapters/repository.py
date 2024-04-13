@@ -5,7 +5,6 @@ This module contains the AbstractRepository class and its subclasses.
 import abc
 import datetime
 
-from src.app.adapters import orm
 from src.app.domain import model
 
 
@@ -134,7 +133,6 @@ class SqlAlchemyPostRepository(AbstractRepository):
 
 
 class SqlAlchemyCommentRepository(AbstractRepository):
-
     def __init__(self, session):
         """
         Initialize the SqlAlchemyCommentRepository class.

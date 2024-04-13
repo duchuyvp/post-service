@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import abc
 
-from sqlalchemy import create_engine
-from sqlalchemy import orm
-from sqlalchemy.orm import session
+from sqlalchemy import create_engine, orm
 
 from src.app import config
 from src.app.adapters import repository

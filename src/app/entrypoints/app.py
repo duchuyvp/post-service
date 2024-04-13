@@ -1,10 +1,8 @@
 import fastapi
 
-from src.app import bootstrap
-from src.app import views
+from src.app import bootstrap, views
 from src.app.domain import commands
-from src.app.entrypoints import depends
-from src.app.entrypoints import schema
+from src.app.entrypoints import depends, schema
 
 app = fastapi.FastAPI(dependencies=[fastapi.Depends(depends.authorise_user)])
 bus = bootstrap.bootstrap()

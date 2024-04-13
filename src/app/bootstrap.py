@@ -6,14 +6,13 @@ import inspect
 import typing as t
 
 from src.app.adapters import orm
-from src.app.service_layer import handlers
-from src.app.service_layer import messagebus
-from src.app.service_layer import unit_of_work
+from src.app.service_layer import handlers, messagebus, unit_of_work
 
 
 def bootstrap(
     start_orm: bool = True,
-    uow: unit_of_work.AbstractUnitOfWork | t.Type[unit_of_work.AbstractUnitOfWork] = unit_of_work.SqlAlchemyUnitOfWork(),
+    uow: unit_of_work.AbstractUnitOfWork
+    | t.Type[unit_of_work.AbstractUnitOfWork] = unit_of_work.SqlAlchemyUnitOfWork(),
 ) -> messagebus.MessageBus:
     """
     Bootstrap the allocation application.
@@ -38,7 +37,8 @@ def bootstrap(
         for event_type, event_handlers in handlers.EVENT_HANDLERS.items()
     }
     injected_command_handlers = {
-        command_type: inject_dependencies(handler, dependencies) for command_type, handler in handlers.COMMAND_HANDLERS.items()
+        command_type: inject_dependencies(handler, dependencies)
+        for command_type, handler in handlers.COMMAND_HANDLERS.items()
     }
 
     return messagebus.MessageBus(
