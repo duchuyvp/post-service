@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build and Up",
+            "label": "Build Docker Image: post-service",
             "type": "shell",
             "command": "docker-compose",
             "args": [

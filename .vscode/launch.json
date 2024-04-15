@@ -14,7 +14,8 @@
                     "localRoot": "${workspaceFolder}",
                     "remoteRoot": "/post-service"
                 }
-            ]
+            ],
+            "preLaunchTask": "Build Docker Image: post-service"
         }
     ]
 }
