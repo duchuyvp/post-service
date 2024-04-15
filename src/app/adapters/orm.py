@@ -18,6 +18,10 @@ comments = sa.Table(
     sa.Column("id", sa.String, primary_key=True),
     sa.Column("source_id", sa.String),
     sa.Column("source_type", sa.String),
+    # """
+    # sa.Column("post_id", sa.String),
+    # sa.Column("comment_id", sa.String, nullable=True),
+    # """,
     sa.Column("content", sa.String),
     sa.Column("created_time", sa.TIMESTAMP),
     sa.Column("updated_time", sa.TIMESTAMP),
