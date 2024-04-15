@@ -97,11 +97,12 @@ class SqlAlchemyPostRepository(AbstractRepository):
         super().__init__()
         self.session = session
 
-    def _add(self, post):
+    def _add(self, post: model.Table):
         """
         Add a post to the SQL Alchemy repository.
         """
-        self.session.add(post)
+        if isinstance(post, model.Post):
+            self.session.add(post)
 
     def _get(self, post_id) -> model.Post:
         """
@@ -109,23 +110,25 @@ class SqlAlchemyPostRepository(AbstractRepository):
         """
         return self.session.query(model.Post).filter_by(id=post_id).first()
 
-    def _edit(self, post: model.Post, _new: dict) -> None:
+    def _edit(self, post: model.Table, _new: dict) -> None:
         """
         Edit a post in the SQL Alchemy repository.
         """
 
-        post.title = _new["title"]
-        post.content = _new["content"]
-        post.version += 1
-        post.updated_at = datetime.datetime.now()
+        if isinstance(post, model.Post):
+            post.title = _new["title"]
+            post.content = _new["content"]
+            post.version += 1
+            post.updated_time = datetime.datetime.now()
 
-    def _delete(self, post: model.Post) -> None:
+    def _delete(self, post: model.Table) -> None:
         """
         Delete a post from the SQL Alchemy repository.
         """
-        self.session.delete(post)
+        if isinstance(post, model.Post):
+            self.session.delete(post)
 
-    def _query(self, **kwargs):
+    def _query(self, **kwargs) -> list[model.Post]:
         """
         Query the SQL Alchemy repository.
         """
@@ -140,31 +143,33 @@ class SqlAlchemyCommentRepository(AbstractRepository):
         super().__init__()
         self.session = session
 
-    def _add(self, comment: model.Comment):
+    def _add(self, comment: model.Table):
         """
         Add a comment to the SQL Alchemy repository.
         """
-        self.session.add(comment)
+        if isinstance(comment, model.Comment):
+            self.session.add(comment)
 
-    def _get(self, comment_id):
+    def _get(self, comment_id) -> model.Comment:
         """
         Get a comment from the SQL Alchemy repository by ID.
         """
         return self.session.query(model.Comment).filter_by(id=comment_id).first()
 
-    def _delete(self, comment: model.Comment):
+    def _delete(self, comment: model.Table):
         """
         Delete a comment from the SQL Alchemy repository.
         """
-        self.session.delete(comment)
+        if isinstance(comment, model.Comment):
+            self.session.delete(comment)
 
-    def _edit(self, comment: model.Comment, _new: dict):
+    def _edit(self, comment: model.Table, _new: dict):
         """
         Edit a comment in the SQL Alchemy repository.
         """
         raise NotImplementedError
 
-    def _query(self, **kwargs):
+    def _query(self, **kwargs) -> list[model.Comment]:
         """
         Query the SQL Alchemy repository.
         """

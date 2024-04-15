@@ -1,16 +1,20 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Python Debugger: FastAPI",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "uvicorn",
-      "args": ["src.app.entrypoints.app:app", "--reload"],
-      "jinja": true
-    }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Remote FastAPI",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "0.0.0.0",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/post-service"
+                }
+            ]
+        }
+    ]
 }

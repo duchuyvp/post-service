@@ -1,33 +1,36 @@
 version: "3.2"
 services:
-  redis_pubsub:
+  # redis_pubsub:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   image: allocation-image
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #   volumes:
+  #     - ./src:/src
+  #     - ./tests:/tests
+  #   entrypoint:
+  #     - python
+  #     - /src/app/entrypoints/redis_event_consumer.py
+
+  post-service:
     build:
       context: .
       dockerfile: Dockerfile
-    image: allocation-image
+    image: post-service
     depends_on:
       - postgres
-      - redis
-    volumes:
-      - ./src:/src
-      - ./tests:/tests
-    entrypoint:
-      - python
-      - /src/app/entrypoints/redis_event_consumer.py
-
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - redis_pubsub
     env_file: .env
-    volumes:
-      - ./src:/src
-      - ./tests:/tests
-    command: poetry run uvicorn src.app.entrypoints.app:app --host 0.0.0.0 --port 8000
+    # volumes:
+    #   - ./src:/post-service/src
+    #   - ./tests:/post-service/tests
+    # command: poetry run uvicorn src.app.entrypoints.app:app --host 0.0.0.0 --port 8000
+    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m poetry run uvicorn src.app.entrypoints.app:app --host 0.0.0.0 --port 8000"]
     ports:
       - "8000:8000"
+      - "5678:5678"
 
   postgres:
     image: postgres
@@ -37,16 +40,13 @@ services:
       - POSTGRES_DB=db
     ports:
       - "5432:5432"
+    volumes:
+      - pg:/var/lib/postgresql/data
 
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
-
-  adminer:
-    image: adminer
-    ports:
-      - "8080:8080"
+  # redis:
+  #   image: redis
+  #   ports:
+  #     - "6379:6379"
 
 volumes:
   pg:
