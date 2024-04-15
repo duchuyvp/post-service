@@ -117,3 +117,5 @@ def start_mappers() -> None:
             "like_count": orm.column_property(sa.func.count("likes").label("like_count")),
         }
     )
+
+    metadata.create_all(bind=sa.create_engine("postgresql://postgres:postgres@localhost:5432/db"))

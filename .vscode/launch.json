@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Remote FastAPI",
+            "name": "Docker: Remote FastAPI",
             "type": "debugpy",
             "request": "attach",
             "connect": {
