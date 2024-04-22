@@ -30,33 +30,29 @@ class Like(Table):
     def __init__(
         self,
         user_id: str,
-        source_id: str,
-        source_type: t.Literal["post", "comment"],
+        post_id: str | None,
+        comment_id: str | None,
     ):
         self.id = str(uuid.uuid4())
         self.user_id = user_id
-        self.source_id = source_id
-        self.source_type = source_type
+        self.post_id = post_id
+        self.comment_id = comment_id
         self.events = []  # type: list[events.Event]
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Like):
             return False
-        return (
-            self.source_id == other.source_id
-            and self.source_type == other.source_type
-            and self.user_id == other.user_id
-        )
-
-    def __hash__(self) -> int:
-        return hash(self.id)
+        return self.user_id == other.user_id and self.post_id == other.post_id and self.comment_id == other.comment_id
 
     def __repr__(self) -> str:
         return f"<Like {self.id}>"
 
     @staticmethod
-    def create(user_id: str, source_id: str, source_type: t.Literal["post", "comment"]) -> Like:
-        like = Like(user_id, source_id, source_type)
+    def create(user_id: str, post_id: str | None = None, comment_id: str | None = None) -> Like:
+        if post_id is None and comment_id is None:
+            raise ValueError("Cannot create a like without a post_id or comment_id")
+
+        like = Like(user_id, post_id, comment_id)
         return like
 
     def delete(self) -> None:
@@ -66,8 +62,8 @@ class Like(Table):
         return {
             "id": str(self.id),
             "user_id": self.user_id,
-            "source_id": self.source_id,
-            "source_type": self.source_type,
+            "post_id": self.post_id,
+            "comment_id": self.comment_id,
         }
 
 
@@ -81,18 +77,21 @@ class Comment(Table):
         self,
         content: str,
         author_id: str,
-        source_id: str,
-        source_type: t.Literal["post", "comment"],
+        level: t.Literal[0, 1, 2, 3],
+        post_id: str | None,
+        comment_id: str | None,
     ):
         self.id = str(uuid.uuid4())
         self.content = content
-        self.created_time = datetime.datetime.now()
-        self.source_id = source_id
-        self.source_type = source_type
         self.author_id = author_id
+        self.level = level
+        self.post_id = post_id
+        self.comment_id = comment_id
+        self.like_count = 0
+        self.version = 1
+        self.created_time = datetime.datetime.now()
         self.replies = []  # type: list[Comment]
         self.likes = []  # type: list[Like]
-        self.like_count = 0
         self.events = []  # type: list[events.Event]
 
     def __eq__(self, other: object) -> bool:
@@ -100,17 +99,27 @@ class Comment(Table):
             return False
         return self.id == other.id
 
-    def __hash__(self) -> int:
-        return hash(self.id)
-
     def __repr__(self) -> str:
         return f"<Comment {self.id}>"
 
     @staticmethod
     def create(
-        content: str, author_id: str, source_id: str, source_type: t.Literal["post", "comment"]
+        content: str,
+        author_id: str,
+        level: t.Literal[0, 1, 2, 3],
+        post_id: str | None = None,
+        comment_id: str | None = None,
     ) -> Comment:
-        comment = Comment(content, author_id, source_id, source_type)
+        if post_id is None and comment_id is None:
+            raise ValueError("Cannot create a comment without a post_id or comment_id")
+
+        if level not in [0, 1, 2, 3]:
+            raise ValueError("level of a comment or reply must not exceed 3")
+
+        if level != 0 and comment_id is None:
+            raise ValueError("A reply must have a comment_id")
+
+        comment = Comment(content, author_id, level, post_id, comment_id)
         return comment
 
     def __lt__(self, other: Comment) -> bool:
@@ -120,11 +129,18 @@ class Comment(Table):
         """ """
 
     def like_unlike(self, user_id: str) -> None:
-        like = Like.create(user_id, self.id, "comment")
+        like = Like.create(user_id, self.post_id, self.id)
         if like in self.likes:
             self.likes.remove(like)
+            self.like_count -= 1
         else:
             self.likes.append(like)
+            self.like_count += 1
+
+    def reply(self, content: str, author_id: str) -> Comment:
+        reply = Comment.create(content, author_id, t.cast(t.Literal[0, 1, 2, 3], self.level + 1), self.post_id, self.id)
+        # self.replies.append(reply)
+        return reply
 
     def can_edit_or_delete(self, user_id: str) -> bool:
         return user_id == self.author_id
@@ -133,10 +149,11 @@ class Comment(Table):
         return {
             "id": str(self.id),
             "content": self.content,
-            "created_time": self.created_time.isoformat(),
             "author_id": self.author_id,
-            "source_id": self.source_id,
-            "source_type": self.source_type,
+            "level": self.level,
+            "post_id": self.post_id,
+            "comment_id": self.comment_id,
+            "created_time": self.created_time.isoformat(),
             "like_count": self.like_count,
         }
 
@@ -158,11 +175,11 @@ class Post(Table):
         self.id = str(uuid.uuid4())
         self.title = title
         self.content = content
-        self.created_time = datetime.datetime.now()
-        self.updated_time = datetime.datetime.now()
-        self.version = 1
         self.author_id = author_id
         self.like_count = 0
+        self.version = 1
+        self.created_time = datetime.datetime.now()
+        self.updated_time = datetime.datetime.now()
         self.likes = []  # type: list[Like]
         self.comments = []  # type: list[Comment]
         self.events = []  # type: list[events.Event]
@@ -171,9 +188,6 @@ class Post(Table):
         if not isinstance(other, Post):
             return False
         return self.id == other.id
-
-    def __hash__(self) -> int:
-        return hash(self.id)
 
     def __repr__(self) -> str:
         return f"<Post {self.id} {self.title}>"
@@ -196,14 +210,16 @@ class Post(Table):
         """ """
 
     def like_unlike(self, user_id: str) -> None:
-        like = Like.create(user_id, self.id, "post")
+        like = Like.create(user_id, self.id, None)
         if like in self.likes:
             self.likes.remove(like)
+            self.like_count -= 1
         else:
             self.likes.append(like)
+            self.like_count += 1
 
     def comment(self, content: str, author_id: str) -> Comment:
-        comment = Comment.create(content, author_id, self.id, "post")
+        comment = Comment.create(content, author_id, 0, self.id, None)
         self.comments.append(comment)
         return comment
 
@@ -214,10 +230,9 @@ class Post(Table):
         return {
             "id": str(self.id),
             "title": self.title,
-            "content": self.content,
-            "created_time": self.created_time.isoformat(),
             "author_id": self.author_id,
-            # "likes": self.likes,
+            "content": self.content,
             "like_count": self.like_count,
             "version": self.version,
+            "created_time": self.created_time.isoformat(),
         }

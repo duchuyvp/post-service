@@ -6,6 +6,11 @@ class CreatePostRequest(pydantic.BaseModel):
     content: str
 
 
+class EditPostRequest(pydantic.BaseModel):
+    title: str
+    content: str
+
+
 class PostResponse(pydantic.BaseModel):
     id: str
     title: str

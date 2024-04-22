@@ -41,20 +41,20 @@ repos:
           - --install-types
           - --non-interactive
           - --explicit-package-bases
-  # - repo: https://github.com/pre-commit/mirrors-prettier
-  #   rev: "v3.0.3"
-  #   hooks:
-  #     - id: prettier
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v3.0.3"
+    hooks:
+      - id: prettier
   # - repo: https://github.com/pylint-dev/pylint
   #   rev: v3.0.1
   #   hooks:
   #     - id: pylint
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.5
-    hooks:
-      - id: ruff
-        args: [--fix]
-      - id: ruff-format
+  # - repo: https://github.com/astral-sh/ruff-pre-commit
+  #   rev: v0.3.5
+  #   hooks:
+  #     - id: ruff
+  #       args: [--fix]
+  #     - id: ruff-format
   # - repo: local
   #   hooks:
   #     - id: pytest-check

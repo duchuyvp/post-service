@@ -4,6 +4,9 @@ This module contains the AbstractRepository class and its subclasses.
 
 import abc
 import datetime
+import typing as t
+
+from sqlalchemy.orm import Session
 
 from src.app.domain import model
 
@@ -15,35 +18,35 @@ class AbstractRepository(abc.ABC):
         """
         self.seen = set()  # type: set[model.Table]
 
-    def add(self, rc: model.Table) -> None:
+    def add(self, r: model.Table) -> None:
         """
         Add a record to the repository.
         """
-        self._add(rc)
-        self.seen.add(rc)
+        self._add(r)
+        self.seen.add(r)
 
     def get(self, id: str) -> model.Table:
         """
         Get a record from the repository by ID.
         """
-        rc = self._get(id)
-        if rc:
-            self.seen.add(rc)
-        return rc
+        r = self._get(id)
+        if r:
+            self.seen.add(r)
+        return r
 
-    def edit(self, rc: model.Table, _new: dict) -> None:
+    def edit(self, r: model.Table, _new: dict) -> None:
         """
         Edit a record in the repository.
         """
-        self._edit(rc, _new)
-        self.seen.add(rc)
+        self._edit(r, _new)
+        self.seen.add(r)
 
-    def delete(self, rc: model.Table) -> None:
+    def delete(self, r: model.Table) -> None:
         """
         Delete a record from the repository.
         """
-        self._delete(rc)
-        self.seen.remove(rc)
+        self._delete(r)
+        self.seen.remove(r)
 
     def query(self, **kwargs) -> list[model.Table]:
         """
@@ -54,7 +57,7 @@ class AbstractRepository(abc.ABC):
         return rcs
 
     @abc.abstractmethod
-    def _add(self, rc: model.Table):
+    def _add(self, r: model.Table):
         """
         Abstract method to add a record to the repository.
         """
@@ -68,14 +71,14 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _edit(self, rc: model.Table, _new: dict):
+    def _edit(self, r: model.Table, _new: dict):
         """
         Abstract method to edit a record in the repository.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _delete(self, rc: model.Table):
+    def _delete(self, r: model.Table):
         """
         Abstract method to delete a record from the repository.
         """
@@ -89,88 +92,49 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
 
-class SqlAlchemyPostRepository(AbstractRepository):
-    def __init__(self, session):
+class SqlAlchemyRepository(AbstractRepository):
+    def __init__(self, session: Session, model: t.Type[model.Table]):
         """
         Initialize the SqlAlchemyRepository class.
         """
         super().__init__()
         self.session = session
+        self.model = model
 
-    def _add(self, post: model.Table):
+    def _add(self, r: model.Table):
         """
-        Add a post to the SQL Alchemy repository.
+        Add a record Table to the SQL Alchemy repository.
         """
-        if isinstance(post, model.Post):
-            self.session.add(post)
+        self.session.add(r)
 
-    def _get(self, post_id) -> model.Post:
+    def _get(self, r_id: str) -> model.Table:
         """
-        Get a post from the SQL Alchemy repository by ID.
+        Get a record Table from the SQL Alchemy repository by ID.
         """
-        return self.session.query(model.Post).filter_by(id=post_id).first()
+        _model = self.model
+        return self.session.query(_model).filter_by(id=r_id).first()
 
-    def _edit(self, post: model.Table, _new: dict) -> None:
+    def _edit(self, r: model.Table, _new: dict) -> None:
         """
-        Edit a post in the SQL Alchemy repository.
+        Edit a record Table in the SQL Alchemy repository.
         """
+        _model = self.model
+        if isinstance(r, model.Post):
+            r.title = _new["title"]
+            r.content = _new["content"]
+            r.version += 1
+            r.updated_time = datetime.datetime.now()
 
-        if isinstance(post, model.Post):
-            post.title = _new["title"]
-            post.content = _new["content"]
-            post.version += 1
-            post.updated_time = datetime.datetime.now()
+    def _delete(self, r: model.Table) -> None:
+        """
+        Delete a record Table from the SQL Alchemy repository.
+        """
+        _model = self.model
+        self.session.delete(r)
 
-    def _delete(self, post: model.Table) -> None:
+    def _query(self, **kwargs) -> list[model.Table]:
         """
-        Delete a post from the SQL Alchemy repository.
+        Query from SQL Alchemy repository.
         """
-        if isinstance(post, model.Post):
-            self.session.delete(post)
-
-    def _query(self, **kwargs) -> list[model.Post]:
-        """
-        Query the SQL Alchemy repository.
-        """
-        return self.session.query(model.Post).filter_by(**kwargs).all()
-
-
-class SqlAlchemyCommentRepository(AbstractRepository):
-    def __init__(self, session):
-        """
-        Initialize the SqlAlchemyCommentRepository class.
-        """
-        super().__init__()
-        self.session = session
-
-    def _add(self, comment: model.Table):
-        """
-        Add a comment to the SQL Alchemy repository.
-        """
-        if isinstance(comment, model.Comment):
-            self.session.add(comment)
-
-    def _get(self, comment_id) -> model.Comment:
-        """
-        Get a comment from the SQL Alchemy repository by ID.
-        """
-        return self.session.query(model.Comment).filter_by(id=comment_id).first()
-
-    def _delete(self, comment: model.Table):
-        """
-        Delete a comment from the SQL Alchemy repository.
-        """
-        if isinstance(comment, model.Comment):
-            self.session.delete(comment)
-
-    def _edit(self, comment: model.Table, _new: dict):
-        """
-        Edit a comment in the SQL Alchemy repository.
-        """
-        raise NotImplementedError
-
-    def _query(self, **kwargs) -> list[model.Comment]:
-        """
-        Query the SQL Alchemy repository.
-        """
-        return self.session.query(model.Comment).filter_by(**kwargs).all()
+        _model = self.model
+        return self.session.query(_model).filter_by(**kwargs).all()

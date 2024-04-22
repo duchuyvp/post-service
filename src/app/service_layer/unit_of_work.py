@@ -1,16 +1,22 @@
 from __future__ import annotations
 
 import abc
+import contextlib
 
 from sqlalchemy import create_engine, orm
 
 from src.app import config
 from src.app.adapters import repository
+from src.app.domain import model
 
 
 class AbstractUnitOfWork(abc.ABC):
     posts: repository.AbstractRepository
     comments: repository.AbstractRepository
+
+    @contextlib.contextmanager
+    def unit_of_work(self):
+        yield self
 
     def __enter__(self) -> AbstractUnitOfWork:
         return self
@@ -47,10 +53,23 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
     def __init__(self, session_factory=DEFAULT_SESSION_FACTORY):
         self.session_factory = session_factory
 
+    @contextlib.contextmanager
+    def unit_of_work(self):
+        try:
+            self.session = self.session_factory()
+            self.posts = repository.SqlAlchemyRepository(self.session, model.Post)
+            self.comments = repository.SqlAlchemyRepository(self.session, model.Comment)
+            yield self
+        except:
+            self.rollback()
+            raise
+        finally:
+            self.session.close()
+
     def __enter__(self):
         self.session = self.session_factory()
-        self.posts = repository.SqlAlchemyPostRepository(self.session)
-        self.comments = repository.SqlAlchemyCommentRepository(self.session)
+        self.posts = repository.SqlAlchemyRepository(self.session, model.Post)
+        self.comments = repository.SqlAlchemyRepository(self.session, model.Comment)
         return super().__enter__()
 
     def __exit__(self, *args):

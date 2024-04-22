@@ -28,12 +28,21 @@ class EditPostCommand(Command):
     content: str
 
 
-class LikeUnlikePostCommand(Command):
+class LikePostCommand(Command):
     """
     Command for liking a post.
     """
 
     post_id: str
+    user_id: str
+
+
+class LikeCommentCommand(Command):
+    """
+    Command for liking a comment.
+    """
+
+    comment_id: str
     user_id: str
 
 
@@ -43,6 +52,16 @@ class CommentPostCommand(Command):
     """
 
     post_id: str
+    user_id: str
+    content: str
+
+
+class ReplyCommentCommand(Command):
+    """
+    Command for replying to a comment.
+    """
+
+    comment_id: str
     user_id: str
     content: str
 

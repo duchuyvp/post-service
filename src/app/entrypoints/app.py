@@ -33,7 +33,7 @@ def get_post(id: str) -> schema.PostResponse:
 
 
 @app.put("/posts/{id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
-def edit_post(id: str, request: schema.CreatePostRequest, user_id: str = fastapi.Header(...)):
+def edit_post(id: str, request: schema.EditPostRequest, user_id: str = fastapi.Header(...)):
     """
     Edit a post.
     """
@@ -67,7 +67,7 @@ def like_post(id: str, user_id: str = fastapi.Header(...)):
     """
     Like a post.
     """
-    cmd = commands.LikeUnlikePostCommand(
+    cmd = commands.LikePostCommand(
         user_id=user_id,
         post_id=id,
     )
@@ -91,12 +91,41 @@ def comment_post(id: str, request: schema.CommentRequest, user_id: str = fastapi
     return fastapi.Response(status_code=201)
 
 
+@app.post("/comments/{id}/reply", status_code=fastapi.status.HTTP_201_CREATED)
+def reply_comment(id: str, request: schema.CommentRequest, user_id: str = fastapi.Header(...)):
+    """
+    Reply to a comment.
+    """
+    cmd = commands.ReplyCommentCommand(
+        user_id=user_id,
+        comment_id=id,
+        content=request.content,
+    )
+    bus.handle(cmd)
+
+    return fastapi.Response(status_code=201)
+
+
 @app.delete("/comments/{id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
 def delete_comment(id: str, user_id: str = fastapi.Header(...)):
     """
     Delete a comment.
     """
     cmd = commands.DeleteCommentCommand(
+        user_id=user_id,
+        comment_id=id,
+    )
+    bus.handle(cmd)
+
+    return fastapi.Response(status_code=204)
+
+
+@app.post("/comments/{id}/like", status_code=fastapi.status.HTTP_204_NO_CONTENT)
+def like_comment(id: str, user_id: str = fastapi.Header(...)):
+    """
+    Like a comment.
+    """
+    cmd = commands.LikeCommentCommand(
         user_id=user_id,
         comment_id=id,
     )

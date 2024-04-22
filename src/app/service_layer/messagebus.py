@@ -20,8 +20,8 @@ class MessageBus:
     def __init__(
         self,
         uow: unit_of_work.AbstractUnitOfWork,
-        event_handlers: list[t.Type[events.Event], list[t.Callable]],
-        command_handlers: t.Dict[t.Type[commands.Command], t.Callable],
+        event_handlers: dict[t.Type[events.Event], list[t.Callable]],
+        command_handlers: dict[t.Type[commands.Command], t.Callable],
     ):
         """Initializes the MessageBus with the given parameters."""
         self.uow = uow

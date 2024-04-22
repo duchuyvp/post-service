@@ -11,7 +11,7 @@ from src.app.domain import events
 
 logger = logging.getLogger(__name__)
 
-r = redis.Redis(host=config.settings.REDIS_HOST, port=config.settings.REDIS_PORT, db=0)
+r = redis.Redis(host=config.settings.REDIS_HOST, port=config.settings.REDIS_PORT, db=2)
 
 
 def publish(channel, event: events.Event):

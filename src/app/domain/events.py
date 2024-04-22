@@ -50,9 +50,36 @@ class PostUnlikedEvent(Event):
     user_id: str
 
 
+class CommentLikedEvent(Event):
+    """
+    Event representing a like on a comment.
+    """
+
+    comment_id: str
+    user_id: str
+
+
+class CommentUnlikedEvent(Event):
+    """
+    Event representing an unlike on a comment.
+    """
+
+    comment_id: str
+    user_id: str
+
+
 class CommentCreatedEvent(Event):
     """
     Event representing a comment on a post.
+    """
+
+    comment_id: str
+    post_id: str
+
+
+class CommentRepliedEvent(Event):
+    """
+    Event representing a reply to a comment.
     """
 
     comment_id: str

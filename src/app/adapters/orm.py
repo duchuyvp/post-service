@@ -16,17 +16,15 @@ comments = sa.Table(
     "comments",
     metadata,
     sa.Column("id", sa.String, primary_key=True),
-    sa.Column("source_id", sa.String),
-    sa.Column("source_type", sa.String),
-    # """
-    # sa.Column("post_id", sa.String),
-    # sa.Column("comment_id", sa.String, nullable=True),
-    # """,
     sa.Column("content", sa.String),
+    sa.Column("author_id", sa.String),
+    sa.Column("level", sa.Integer),
+    sa.Column("post_id", sa.String),
+    sa.Column("comment_id", sa.String, nullable=True),
+    sa.Column("like_count", sa.Integer),
+    sa.Column("version", sa.Integer),
     sa.Column("created_time", sa.TIMESTAMP),
     sa.Column("updated_time", sa.TIMESTAMP),
-    sa.Column("version", sa.Integer),
-    sa.Column("author_id", sa.String),
 )
 
 
@@ -35,20 +33,22 @@ posts = sa.Table(
     metadata,
     sa.Column("id", sa.String, primary_key=True),
     sa.Column("title", sa.String),
+    sa.Column("author_id", sa.String),
     sa.Column("content", sa.String),
+    sa.Column("like_count", sa.Integer),
+    sa.Column("version", sa.Integer),
     sa.Column("created_time", sa.TIMESTAMP),
     sa.Column("updated_time", sa.TIMESTAMP),
-    sa.Column("version", sa.Integer),
-    sa.Column("author_id", sa.String),
 )
 
 likes = sa.Table(
     "likes",
     metadata,
     sa.Column("id", sa.String, primary_key=True),
-    sa.Column("source_id", sa.String),
-    sa.Column("source_type", sa.String),
     sa.Column("user_id", sa.String),
+    sa.Column("post_id", sa.String, nullable=True),
+    sa.Column("comment_id", sa.String, nullable=True),
+    sa.Column("created_time", sa.TIMESTAMP),
 )
 
 
@@ -76,25 +76,19 @@ def start_mappers() -> None:
         {
             "replies": orm.relationship(
                 argument=comment_mapper,
-                primaryjoin=(
-                    sa.and_(
-                        comments.c.id == comments.c.source_id, comments.c.source_type == "comment"
-                    )
-                ),
+                primaryjoin=(comments.c.id == orm.foreign(comments.c.comment_id)),
                 backref="comment",
                 collection_class=list,
                 lazy="select",
+                remote_side=comments.c.id,
             ),
             "likes": orm.relationship(
                 argument=like_mapper,
-                primaryjoin=(
-                    sa.and_(comments.c.id == likes.c.source_id, likes.c.source_type == "comment")
-                ),
+                primaryjoin=(comments.c.id == orm.foreign(likes.c.comment_id)),
                 backref="comment",
                 collection_class=list,
                 lazy="select",
             ),
-            "like_count": orm.column_property(sa.func.count("likes").label("like_count")),
         }
     )
 
@@ -103,7 +97,10 @@ def start_mappers() -> None:
             "comments": orm.relationship(
                 argument=comment_mapper,
                 primaryjoin=(
-                    sa.and_(posts.c.id == comments.c.source_id, comments.c.source_type == "post")
+                    sa.and_(
+                        posts.c.id == orm.foreign(comments.c.post_id),
+                        comments.c.comment_id.is_(None),
+                    )
                 ),
                 backref="post",
                 collection_class=list,
@@ -111,15 +108,12 @@ def start_mappers() -> None:
             ),
             "likes": orm.relationship(
                 argument=like_mapper,
-                primaryjoin=(
-                    sa.and_(posts.c.id == likes.c.source_id, likes.c.source_type == "post")
-                ),
+                primaryjoin=(posts.c.id == orm.foreign(likes.c.post_id)),
                 backref="post",
                 collection_class=list,
                 lazy="select",
             ),
-            "like_count": orm.column_property(sa.func.count("likes").label("like_count")),
         }
     )
 
-    metadata.create_all(bind=sa.create_engine("postgresql://postgres:postgres@localhost:5432/db"))
+    # metadata.create_all(bind=sa.create_engine("postgresql://postgres:postgres@localhost:5432/db"))
