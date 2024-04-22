@@ -30,6 +30,10 @@ repos:
     rev: v2.2.6
     hooks:
       - id: codespell
+        exclude: >
+          (?x)^(
+            poetry.lock
+          )$
         additional_dependencies:
           - tomli
   - repo: https://github.com/pre-commit/mirrors-mypy

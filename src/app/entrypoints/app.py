@@ -141,3 +141,12 @@ def get_comments(post_id: str) -> list[schema.CommentResponse]:
     """
     comments = views.get_comments(post_id=post_id, uow=bus.uow)
     return comments
+
+
+@app.get("/comments/{id}/replies")
+def get_replies(id: str) -> list[schema.CommentResponse]:
+    """
+    Get replies of a comment.
+    """
+    replies = views.get_reply_comments(comment_id=id, uow=bus.uow)
+    return replies

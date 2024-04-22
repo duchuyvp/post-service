@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 from sqlalchemy.orm import clear_mappers
-
+from icecream import ic
 from src.app import bootstrap, views
 from src.app.domain import commands
 from src.app.service_layer import unit_of_work
@@ -108,6 +108,7 @@ def test_comment_post(bus, post):
     assert comments[0]["author_id"] == cmd.user_id
     assert comments[0]["content"] == cmd.content
     assert comments[0]["post_id"] == post["id"]
+    assert comments[0]["level"] == 0
 
 
 @pytest.fixture(scope="function")
@@ -171,3 +172,62 @@ def test_reply_comment(bus, comment):
     assert comments[1]["comment_id"] == comment["id"]
     assert comments[1]["level"] == 1
     assert comments[1]["like_count"] == 0
+
+
+def test_comment_exceed_3_layers(bus, comment):
+    cmd_0 = commands.ReplyCommentCommand(
+        comment_id=comment["id"],
+        user_id="test_user_reply_id",
+        content="test reply comment " + str(uuid.uuid4()),
+    )
+
+    bus.handle(cmd_0)
+    comments_0 = views.get_reply_comments(comment["id"], bus.uow)
+    assert len(comments_0) == 1
+    assert comments_0[0]["author_id"] == cmd_0.user_id
+    assert comments_0[0]["content"] == cmd_0.content
+    assert comments_0[0]["post_id"] == comment["post_id"]
+    assert comments_0[0]["comment_id"] == comment["id"]
+    assert comments_0[0]["level"] == 1
+    assert comments_0[0]["like_count"] == 0
+
+    cmd_1 = commands.ReplyCommentCommand(
+        comment_id=comments_0[0]["id"],
+        user_id="test_user_reply_id",
+        content="test reply comment " + str(uuid.uuid4()),
+    )
+
+    bus.handle(cmd_1)
+    comments_1 = views.get_reply_comments(comments_0[0]["id"], bus.uow)
+    assert len(comments_1) == 1
+    assert comments_1[0]["author_id"] == cmd_1.user_id
+    assert comments_1[0]["content"] == cmd_1.content
+    assert comments_1[0]["post_id"] == comment["post_id"]
+    assert comments_1[0]["comment_id"] == comments_0[0]["id"]
+    assert comments_1[0]["level"] == 2
+    assert comments_1[0]["like_count"] == 0
+
+    cmd_2 = commands.ReplyCommentCommand(
+        comment_id=comments_1[0]["id"],
+        user_id="test_user_reply_id",
+        content="test reply comment " + str(uuid.uuid4()),
+    )
+
+    bus.handle(cmd_2)
+    comments_2 = views.get_reply_comments(comments_1[0]["id"], bus.uow)
+    assert len(comments_2) == 1
+    assert comments_2[0]["author_id"] == cmd_2.user_id
+    assert comments_2[0]["content"] == cmd_2.content
+    assert comments_2[0]["post_id"] == comment["post_id"]
+    assert comments_2[0]["comment_id"] == comments_1[0]["id"]
+    assert comments_2[0]["level"] == 3
+    assert comments_2[0]["like_count"] == 0
+
+    cmd_3 = commands.ReplyCommentCommand(
+        comment_id=comments_2[0]["id"],
+        user_id="test_user_reply_id",
+        content="test reply comment " + str(uuid.uuid4()),
+    )
+
+    with pytest.raises(ValueError):
+        bus.handle(cmd_3)

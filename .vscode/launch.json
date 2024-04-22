@@ -17,6 +17,13 @@
       ]
     },
     {
+      "name": "FastAPI",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["src.app.entrypoints.app:app", "--reload"]
+    },
+    {
       "name": "Pytest",
       "type": "debugpy",
       "request": "launch",

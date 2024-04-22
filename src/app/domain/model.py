@@ -6,6 +6,8 @@ import typing as t
 import uuid
 from src.app.domain import events
 
+MAX_LEVEL_DEPTH = t.Literal[0, 1, 2, 3]
+
 
 class Table:
     """
@@ -96,8 +98,8 @@ class Comment(Table):
         # self.likes = []  # type: list[Like]
         self.events = []  # type: list[events.Event]
 
-    replies: list[Comment]
     likes: list[Like]
+    replies: list[Comment]
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Comment):
@@ -146,7 +148,7 @@ class Comment(Table):
             self.like_count += 1
 
     def reply(self, content: str, author_id: str) -> Comment:
-        reply = Comment.create(content, author_id, t.cast(t.Literal[0, 1, 2, 3], self.level + 1), self.post_id, self.id)
+        reply = Comment.create(content, author_id, t.cast(MAX_LEVEL_DEPTH, self.level + 1), self.post_id, self.id)
         # self.replies.append(reply)
         return reply
 

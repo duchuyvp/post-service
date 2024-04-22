@@ -12,6 +12,18 @@ logger = logging.getLogger(__name__)
 mapper_registry = registry()
 metadata = mapper_registry.metadata
 
+
+likes = sa.Table(
+    "likes",
+    metadata,
+    sa.Column("id", sa.String, primary_key=True),
+    sa.Column("user_id", sa.String),
+    sa.Column("post_id", sa.String, nullable=True),
+    sa.Column("comment_id", sa.String, nullable=True),
+    sa.Column("created_time", sa.TIMESTAMP),
+)
+
+
 comments = sa.Table(
     "comments",
     metadata,
@@ -39,16 +51,6 @@ posts = sa.Table(
     sa.Column("version", sa.Integer),
     sa.Column("created_time", sa.TIMESTAMP),
     sa.Column("updated_time", sa.TIMESTAMP),
-)
-
-likes = sa.Table(
-    "likes",
-    metadata,
-    sa.Column("id", sa.String, primary_key=True),
-    sa.Column("user_id", sa.String),
-    sa.Column("post_id", sa.String, nullable=True),
-    sa.Column("comment_id", sa.String, nullable=True),
-    sa.Column("created_time", sa.TIMESTAMP),
 )
 
 
