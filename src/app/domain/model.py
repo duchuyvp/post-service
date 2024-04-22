@@ -4,7 +4,6 @@ import abc
 import datetime
 import typing as t
 import uuid
-
 from src.app.domain import events
 
 
@@ -43,6 +42,9 @@ class Like(Table):
         if not isinstance(other, Like):
             return False
         return self.user_id == other.user_id and self.post_id == other.post_id and self.comment_id == other.comment_id
+
+    def __hash__(self) -> int:
+        return hash((self.user_id, self.post_id, self.comment_id))
 
     def __repr__(self) -> str:
         return f"<Like {self.id}>"
@@ -90,14 +92,20 @@ class Comment(Table):
         self.like_count = 0
         self.version = 1
         self.created_time = datetime.datetime.now()
-        self.replies = []  # type: list[Comment]
-        self.likes = []  # type: list[Like]
+        # self.replies = []  # type: list[Comment]
+        # self.likes = []  # type: list[Like]
         self.events = []  # type: list[events.Event]
+
+    replies: list[Comment]
+    likes: list[Like]
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Comment):
             return False
         return self.id == other.id
+
+    def __hash__(self) -> int:
+        return hash(self.id)
 
     def __repr__(self) -> str:
         return f"<Comment {self.id}>"
@@ -164,8 +172,6 @@ class Post(Table):
     Every attr and method is self-explanatory.
     """
 
-    comments = []  # type: list[Comment]
-
     def __init__(
         self,
         title: str,
@@ -180,14 +186,20 @@ class Post(Table):
         self.version = 1
         self.created_time = datetime.datetime.now()
         self.updated_time = datetime.datetime.now()
-        self.likes = []  # type: list[Like]
-        self.comments = []  # type: list[Comment]
+        # self.likes = []  # type: list[Like]
+        # self.comments = []  # type: list[Comment]
         self.events = []  # type: list[events.Event]
+
+    likes: list[Like]
+    comments: list[Comment]
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Post):
             return False
         return self.id == other.id
+
+    def __hash__(self) -> int:
+        return hash(self.id)
 
     def __repr__(self) -> str:
         return f"<Post {self.id} {self.title}>"

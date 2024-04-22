@@ -1,21 +1,27 @@
 {
-    "version": "0.2.0",
-    "configurations": [
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Docker: Remote FastAPI",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "0.0.0.0",
+        "port": 5678
+      },
+      "pathMappings": [
         {
-            "name": "Docker: Remote FastAPI",
-            "type": "debugpy",
-            "request": "attach",
-            "connect": {
-                "host": "0.0.0.0",
-                "port": 5678
-            },
-            "pathMappings": [
-                {
-                    "localRoot": "${workspaceFolder}",
-                    "remoteRoot": "/post-service"
-                }
-            ],
-            "preLaunchTask": "Build Docker Image: post-service"
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/post-service"
         }
-    ]
+      ]
+    },
+    {
+      "name": "Pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["${workspaceFolder}/tests"]
+    }
+  ]
 }

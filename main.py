@@ -1,10 +1,34 @@
-from typing import Literal, cast
+from typing import List, Optional
+from sqlalchemy.orm import relationship, RelationshipProperty
 
 
-def my_function(value: Literal[0, 1, 2, 3]):
-    print(value)
-    print(type(value))
+class Comment:
+    def __init__(self, id: Optional[int] = None, comment_id: Optional[int] = None, text: Optional[str] = None):
+        self.id = id
+        self.comment_id = comment_id
+        self.text = text  # Assuming you have a text attribute for the comment
 
+        # Do not manually initialize replies here; SQLAlchemy manages it
+        # self.replies: List['Comment'] = []  # Remove this initialization
 
-value = cast(Literal[0, 1, 2, 3], 3)
-my_function(value)
+    # Type hint for replies attribute
+    replies: RelationshipProperty[List["Comment"]]
+
+    def add_reply(self, reply_text: str) -> "Comment":
+        """
+        Adds a reply to the current comment.
+
+        Parameters:
+            reply_text (str): The text of the reply.
+
+        Returns:
+            Comment: The newly created reply.
+        """
+        # Create a new Comment object representing the reply
+        reply = Comment(comment_id=self.id, text=reply_text)
+
+        # Append the reply to the list of replies using the relationship
+        self.replies.append(reply)
+
+        # Return the newly created reply for further use if needed
+        return reply
