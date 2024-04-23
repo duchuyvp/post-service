@@ -27,7 +27,12 @@ services:
     #   - ./src:/post-service/src
     #   - ./tests:/post-service/tests
     # command: poetry run uvicorn src.app.entrypoints.app:app --host 0.0.0.0 --port 8000
-    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m poetry run uvicorn src.app.entrypoints.app:app --host 0.0.0.0 --port 8000"]
+    command:
+      [
+        "sh",
+        "-c",
+        "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m poetry run uvicorn src.app.entrypoints.app:app --host 0.0.0.0 --port 8000",
+      ]
     ports:
       - "8000:8000"
       - "5678:5678"

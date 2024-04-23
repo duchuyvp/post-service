@@ -1,30 +1,23 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build Docker Image: post-service",
-            "type": "shell",
-            "command": "docker-compose",
-            "args": [
-                "up",
-                "--build",
-                "-d",
-                "post-service"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            }
-        },
-        {
-            "label": "Stop",
-            "type": "shell",
-            "command": "docker-compose",
-            "args": [
-                "down"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            }
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Docker Image: post-service",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["up", "--build", "-d", "post-service"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Stop",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["down"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
 }
