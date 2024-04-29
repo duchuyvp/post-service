@@ -1,5 +1,8 @@
-from typing import List, Optional
-from sqlalchemy.orm import relationship, RelationshipProperty
+from typing import List
+from typing import Optional
+
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import RelationshipProperty
 
 
 class Comment:

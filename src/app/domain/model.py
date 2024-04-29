@@ -4,6 +4,7 @@ import abc
 import datetime
 import typing as t
 import uuid
+
 from src.app.domain import events
 
 MAX_LEVEL_DEPTH = t.Literal[0, 1, 2, 3]
