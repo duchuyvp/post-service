@@ -1,9 +1,11 @@
 import uuid
 
 import pytest
-from sqlalchemy.orm import clear_mappers
 from icecream import ic
-from src.app import bootstrap, views
+from sqlalchemy.orm import clear_mappers
+
+from src.app import bootstrap
+from src.app import views
 from src.app.domain import commands
 from src.app.service_layer import unit_of_work
 from tests.confest import sql_session_factory  # noqa: F811, F401

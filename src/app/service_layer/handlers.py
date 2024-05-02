@@ -4,7 +4,9 @@ This module contains the handlers for post-related commands.
 
 from __future__ import annotations
 
-from src.app.domain import commands, events, model
+from src.app.domain import commands
+from src.app.domain import events
+from src.app.domain import model
 from src.app.service_layer import unit_of_work
 
 

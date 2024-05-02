@@ -4,7 +4,8 @@ from __future__ import annotations
 import logging
 import typing as t
 
-from src.app.domain import commands, events
+from src.app.domain import commands
+from src.app.domain import events
 
 if t.TYPE_CHECKING:
     from src.app.service_layer import unit_of_work

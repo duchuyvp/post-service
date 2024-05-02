@@ -3,7 +3,8 @@ from __future__ import annotations
 import abc
 import contextlib
 
-from sqlalchemy import create_engine, orm
+from sqlalchemy import create_engine
+from sqlalchemy import orm
 
 from src.app import config
 from src.app.adapters import repository
