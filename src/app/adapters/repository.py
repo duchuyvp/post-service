@@ -6,7 +6,7 @@ import abc
 import datetime
 import typing as t
 
-from sqlalchemy.orm import Session
+from sqlalchemy import orm
 
 from src.app.domain import model
 
@@ -56,6 +56,14 @@ class AbstractRepository(abc.ABC):
         self.seen.update(rcs)
         return rcs
 
+    @property
+    @abc.abstractmethod
+    def _q(self):
+        """
+        Abstract method to add a record to the repository.
+        """
+        raise NotImplementedError
+
     @abc.abstractmethod
     def _add(self, r: model.Table):
         """
@@ -93,7 +101,7 @@ class AbstractRepository(abc.ABC):
 
 
 class SqlAlchemyRepository(AbstractRepository):
-    def __init__(self, session: Session, model: t.Type[model.Table]):
+    def __init__(self, session: orm.Session, model: t.Type[model.Table]):
         """
         Initialize the SqlAlchemyRepository class.
         """
@@ -138,3 +146,11 @@ class SqlAlchemyRepository(AbstractRepository):
         """
         _model = self.model
         return self.session.query(_model).filter_by(**kwargs).all()
+
+    @property
+    def _q(self) -> orm.query.Query:
+        """
+        Get the query object.
+        Use to execute complex queries.
+        """
+        return self.session.query(self.model)

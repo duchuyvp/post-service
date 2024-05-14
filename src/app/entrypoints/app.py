@@ -1,3 +1,5 @@
+import typing as t
+
 import fastapi
 
 from src.app import bootstrap
@@ -51,7 +53,7 @@ def edit_post(id: str, request: schema.EditPostRequest, user_id: str = fastapi.H
 
 
 @app.delete("/posts/{id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
-def delete_post(id: str, user_id: str = fastapi.Header(...)):
+def delete_post(id: str, user_id: t.Annotated[str, fastapi.Header(...)]):
     """
     Delete a post.
     """
@@ -65,7 +67,7 @@ def delete_post(id: str, user_id: str = fastapi.Header(...)):
 
 
 @app.post("/posts/{id}/like", status_code=fastapi.status.HTTP_204_NO_CONTENT)
-def like_post(id: str, user_id: str = fastapi.Header(...)):
+def like_post(id: str, user_id: t.Annotated[str, fastapi.Header(...)]):
     """
     Like a post.
     """
@@ -79,7 +81,7 @@ def like_post(id: str, user_id: str = fastapi.Header(...)):
 
 
 @app.post("/posts/{id}/comments", status_code=fastapi.status.HTTP_201_CREATED)
-def comment_post(id: str, request: schema.CommentRequest, user_id: str = fastapi.Header(...)):
+def comment_post(id: str, request: schema.CommentRequest, user_id: t.Annotated[str, fastapi.Header(...)]):
     """
     Comment a post.
     """
@@ -94,7 +96,7 @@ def comment_post(id: str, request: schema.CommentRequest, user_id: str = fastapi
 
 
 @app.post("/comments/{id}/reply", status_code=fastapi.status.HTTP_201_CREATED)
-def reply_comment(id: str, request: schema.CommentRequest, user_id: str = fastapi.Header(...)):
+def reply_comment(id: str, request: schema.CommentRequest, user_id: t.Annotated[str, fastapi.Header(...)]):
     """
     Reply to a comment.
     """
@@ -109,7 +111,7 @@ def reply_comment(id: str, request: schema.CommentRequest, user_id: str = fastap
 
 
 @app.delete("/comments/{id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
-def delete_comment(id: str, user_id: str = fastapi.Header(...)):
+def delete_comment(id: str, user_id: t.Annotated[str, fastapi.Header(...)]):
     """
     Delete a comment.
     """
@@ -123,7 +125,7 @@ def delete_comment(id: str, user_id: str = fastapi.Header(...)):
 
 
 @app.post("/comments/{id}/like", status_code=fastapi.status.HTTP_204_NO_CONTENT)
-def like_comment(id: str, user_id: str = fastapi.Header(...)):
+def like_comment(id: str, user_id: t.Annotated[str, fastapi.Header(...)]):
     """
     Like a comment.
     """
@@ -152,3 +154,12 @@ def get_replies(id: str) -> list[schema.CommentResponse]:
     """
     replies = views.get_reply_comments(comment_id=id, uow=bus.uow)
     return replies
+
+
+@app.get("/posts")
+def get_posts(params: t.Annotated[schema.GetPostParamRequest, fastapi.Depends(depends.get_query_params)]) -> list[schema.PostResponse]:
+    """
+    Get all posts.
+    """
+    posts = views.get_posts(params, uow=bus.uow)
+    return posts

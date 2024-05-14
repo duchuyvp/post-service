@@ -2,6 +2,7 @@
 All view requests are handled here
 """
 
+from src.app.entrypoints import schema
 from src.app.service_layer import unit_of_work
 
 
@@ -48,3 +49,31 @@ def get_reply_comments(comment_id: str, uow: unit_of_work.AbstractUnitOfWork):
     with uow.unit_of_work() as uow_ctx:
         comments = uow_ctx.comments.query(comment_id=comment_id)
         return [comment.model_dump() for comment in comments]
+
+
+def get_posts(params: schema.GetPostParamRequest, uow: unit_of_work.AbstractUnitOfWork):
+    """
+    Get all posts.
+    """
+    with uow.unit_of_work() as uow_ctx:
+        post = uow_ctx.posts.model
+        q = uow_ctx.posts._q
+
+        if params.title is not None:
+            q = q.filter(post.title.like(f"%{params.title}%"))
+
+        if params.content is not None:
+            q = q.filter(post.content.like(f"%{params.content}%"))
+
+        if params.author_id is not None:
+            q = q.filter(post.author_id == params.author_id)
+
+        for order in params.order:
+            if order.startswith("-"):
+                q = q.order_by(getattr(post, order[1:]).desc())
+            else:
+                q = q.order_by(getattr(post, order[1:]))
+        q = q.limit(params.limit).offset(params.offset)
+
+        posts = q.all()
+        return [post.model_dump() for post in posts]
