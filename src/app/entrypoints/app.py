@@ -9,7 +9,7 @@ from src.app.entrypoints import depends
 from src.app.entrypoints import schema
 
 app = fastapi.FastAPI(dependencies=[fastapi.Depends(depends.authorise_user)])
-bus = bootstrap.bootstrap()
+bus = bootstrap.bootstrap(start_orm=False)
 
 
 @app.post("/posts", status_code=fastapi.status.HTTP_201_CREATED)

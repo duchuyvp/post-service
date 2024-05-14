@@ -7,18 +7,11 @@ from sqlalchemy.orm import clear_mappers
 from src.app import bootstrap
 from src.app import views
 from src.app.domain import commands
+from src.app.entrypoints import schema
 from src.app.service_layer import unit_of_work
+from tests.confest import bus  # noqa: F811, F401
+from tests.confest import setup_database  # noqa: F811, F401
 from tests.confest import sql_session_factory  # noqa: F811, F401
-
-
-@pytest.fixture
-def bus(sql_session_factory):
-    bus = bootstrap.bootstrap(
-        start_orm=True,
-        uow=unit_of_work.SqlAlchemyUnitOfWork(sql_session_factory),
-    )
-    yield bus
-    clear_mappers()
 
 
 def test_create_post(bus):
@@ -233,3 +226,54 @@ def test_comment_exceed_3_layers(bus, comment):
 
     with pytest.raises(ValueError):
         bus.handle(cmd_3)
+
+
+def test_get_posts(bus):
+    uniq = str(uuid.uuid4())
+    params = schema.GetPostParamRequest(
+        title=uniq + " test_search_title",
+        content="test_content",
+        author_id="test_search_author_id",
+        order=["-created_at"],
+        limit=10,
+        offset=0,
+    )
+
+    posts = views.get_posts(params, bus.uow)
+
+    assert isinstance(posts, list)
+    assert len(posts) == 0  # Assuming no posts exist with the given parameters
+
+    # Create some test posts
+    cmd1 = commands.CreatePostCommand(
+        title=uniq + " test_search_title_1",
+        content="test_content_1",
+        author_id="test_search_author_id",
+    )
+    bus.handle(cmd1)
+
+    cmd2 = commands.CreatePostCommand(
+        title=uniq + " test_search_title_2",
+        content="test_content_2",
+        author_id="test_search_author_id",
+    )
+    bus.handle(cmd2)
+
+    # Test with updated parameters
+    params.title = uniq + " test_search_title"
+    params.content = "test_content"
+    params.author_id = "test_search_author_id"
+    params.order = ["-created_time"]
+    params.limit = 10
+    params.offset = 0
+
+    posts = views.get_posts(params, bus.uow)
+
+    assert isinstance(posts, list)
+    assert len(posts) == 2
+    assert posts[0]["title"] == uniq + " test_search_title_2"
+    assert posts[0]["content"] == "test_content_2"
+    assert posts[0]["author_id"] == "test_search_author_id"
+    assert posts[1]["title"] == uniq + " test_search_title_1"
+    assert posts[1]["content"] == "test_content_1"
+    assert posts[1]["author_id"] == "test_search_author_id"
