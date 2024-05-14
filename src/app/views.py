@@ -68,11 +68,14 @@ def get_posts(params: schema.GetPostParamRequest, uow: unit_of_work.AbstractUnit
         if params.author_id is not None:
             q = q.filter(post.author_id == params.author_id)
 
-        for order in params.order:
-            if order.startswith("-"):
-                q = q.order_by(getattr(post, order[1:]).desc())
-            else:
-                q = q.order_by(getattr(post, order[1:]))
+        if len(params.order) > 0:
+            q = q.order_by(
+                *[
+                    getattr(post, field[1:]).desc() if field.startswith("-") else getattr(post, field[1:]).asc()
+                    for field in params.order
+                    if field[1:] in post.__table__.columns.keys() and field[0] in ["-", "+"]
+                ]
+            )
         q = q.limit(params.limit).offset(params.offset)
 
         posts = q.all()
