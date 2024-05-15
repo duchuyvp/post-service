@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: python:3.12
     services:
       postgres:
         image: postgres:13
@@ -39,10 +38,10 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest
+          poetry run pytest
         env:
-          POSTGRES_URI: postgresql://postgres:postgres@postgres:5432/test_db
+          POSTGRES_URI: postgresql://postgres:postgres@localhost:5432/test_db
 
       - name: Check code style
         run: |
-          flake8 src tests
+          poetry run flake8 src tests
