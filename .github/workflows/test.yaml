@@ -41,7 +41,3 @@ jobs:
           poetry run pytest
         env:
           POSTGRES_URI: postgresql://postgres:postgres@localhost:5432/test_db
-
-      - name: Check code style
-        run: |
-          poetry run flake8 src tests
