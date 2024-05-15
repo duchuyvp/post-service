@@ -39,10 +39,10 @@ jobs:
 
       - name: Run tests
         run: |
-          poetry run pytest
+          pytest
         env:
           POSTGRES_URI: postgresql://postgres:postgres@postgres:5432/test_db
 
       - name: Check code style
         run: |
-          poetry run flake8 src tests
+          flake8 src tests
