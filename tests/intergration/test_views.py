@@ -10,7 +10,6 @@ from src.app.domain import commands
 from src.app.entrypoints import schema
 from src.app.service_layer import unit_of_work
 from tests.confest import bus  # noqa: F811, F401
-from tests.confest import setup_database  # noqa: F811, F401
 from tests.confest import sql_session_factory  # noqa: F811, F401
 
 

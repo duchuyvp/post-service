@@ -23,14 +23,9 @@ def sql_session_factory():
 
 
 @pytest.fixture(scope="session")
-def setup_database():
-    orm.start_mappers()
-
-
-@pytest.fixture(scope="session")
-def bus(sql_session_factory, setup_database):
+def bus(sql_session_factory):
     bus = bootstrap.bootstrap(
-        start_orm=False,
+        start_orm=True,
         uow=unit_of_work.SqlAlchemyUnitOfWork(sql_session_factory),
     )
     yield bus

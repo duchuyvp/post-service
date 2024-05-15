@@ -2,6 +2,7 @@ import logging
 
 import sqlalchemy as sa
 from sqlalchemy import orm
+from sqlalchemy.orm import clear_mappers
 from sqlalchemy.orm import registry
 
 from src.app.domain import model
@@ -58,6 +59,10 @@ def start_mappers() -> None:
     """
     This method starts the mappers.
     """
+
+    # clean mapper
+    clear_mappers()
+
     # logger.info("Starting mappers")
     like_mapper = mapper_registry.map_imperatively(
         class_=model.Like,

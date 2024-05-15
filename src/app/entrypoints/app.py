@@ -9,7 +9,7 @@ from src.app.entrypoints import depends
 from src.app.entrypoints import schema
 
 app = fastapi.FastAPI(dependencies=[fastapi.Depends(depends.authorise_user)])
-bus = bootstrap.bootstrap(start_orm=False)
+bus = bootstrap.bootstrap()
 
 
 @app.post("/posts", status_code=fastapi.status.HTTP_201_CREATED)
@@ -147,7 +147,7 @@ def get_comments(post_id: str) -> list[schema.CommentResponse]:
     return comments
 
 
-@app.get("/comments/{id}/replies")
+@app.get("/comments/{id}/reply")
 def get_replies(id: str) -> list[schema.CommentResponse]:
     """
     Get replies of a comment.
