@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
-  namespace: {{ .Values.Namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: postgres
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -21,7 +21,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: postgres-config
-  namespace: {{ .Values.Namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: postgres
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -40,7 +40,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres
-  namespace: {{ .Values.Namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: postgres
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -58,7 +58,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: {{ .Values.Namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: postgres
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
