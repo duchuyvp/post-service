@@ -8,3 +8,4 @@ postService:
     port: 8000
 
 namespace: default
+host: post-service.local

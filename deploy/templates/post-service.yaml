@@ -13,27 +13,28 @@ spec:
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}
+      app: post-service
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}
+        app: post-service
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: post-service
           image: "{{ .Values.postService.image }}"
-          env: []
+          env:
+            - name: APP_NAME
+              value: {{ .Chart.Name }}
           envFrom:
             - secretRef:
                 name: post-service-secret
             - secretRef:
                 name: postgres-secret
           ports:
-            - name: http
-              containerPort: {{ .Values.postService.containerPort }}
+            - containerPort: {{ .Values.postService.containerPort }}
               protocol: TCP
 ---
-apiVersion: apps/v1
+apiVersion: v1
 kind: Service
 metadata:
   name: post-service
@@ -43,18 +44,18 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
+  selector:
+    app: post-service
   type: {{ .Values.postService.service.type }}
   ports:
     - port: {{ .Values.postService.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.postService.service.port }}
       protocol: TCP
-  selector:
-    app: {{ .Chart.Name }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: post-service-ingress
+  name: post-service
   labels:
     app: post-service
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -65,7 +66,7 @@ metadata:
     kubernetes.io/tls-acme: "true"
 spec:
   rules:
-    - host: post-service.local
+    - host: {{ .Values.Host }}
       http:
         paths:
           - path: /
@@ -74,7 +75,7 @@ spec:
               service:
                 name: post-service
                 port:
-                  number: 8000
+                  number: {{ .Values.postService.service.port }}
   tls:
     - hosts:
         - chart-example.local
