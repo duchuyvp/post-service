@@ -113,35 +113,35 @@ spec:
 #       protocol: TCP
 #   selector:
 #     app: postgres
-# ---
-# apiVersion: apps/v1
-# kind: Secret
-# metadata:
-#   name: post-service-secret
-#   labels:
-#     app: post-service
-#     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-#     release: "{{ .Release.Name }}"
-#     heritage: "{{ .Release.Service }}"
-# type: Opaque
-# data:
-#   API_VERSION: {{ .Chart.AppVersion | b64enc }}
-# ---
-# apiVersion: apps/v1
-# kind: Secret
-# metadata:
-#   name: postgres-secret
-#   labels:
-#     app: postgres
-#     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-#     release: "{{ .Release.Name }}"
-#     heritage: "{{ .Release.Service }}"
-# type: Opaque
-# data:
-#   POSTGRES_USER: YWRtaW4=
-#   POSTGRES_PASSWORD: eTl3YjNOMFoz
-#   POSTGRES_DB: ZGI=
-#   POSTGRES_URI: cG9zdGdyZXNxbDovL2FkbWluOnk5d2IzTjBaM0Bwb3N0Z3Jlczo1NDMyL2Ri
+---
+apiVersion: apps/v1
+kind: Secret
+metadata:
+  name: post-service-secret
+  labels:
+    app: post-service
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+type: Opaque
+data:
+  API_VERSION: {{ .Chart.AppVersion | b64enc }}
+---
+apiVersion: apps/v1
+kind: Secret
+metadata:
+  name: postgres-secret
+  labels:
+    app: postgres
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+type: Opaque
+data:
+  POSTGRES_USER: YWRtaW4=
+  POSTGRES_PASSWORD: eTl3YjNOMFoz
+  POSTGRES_DB: ZGI=
+  POSTGRES_URI: cG9zdGdyZXNxbDovL2FkbWluOnk5d2IzTjBaM0Bwb3N0Z3Jlczo1NDMyL2Ri
 # ---
 # apiVersion: networking.k8s.io/v1
 # kind: Ingress
