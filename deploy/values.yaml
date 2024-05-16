@@ -1,13 +1,10 @@
 repoURL: https://github.com/duchuyvp/post-service
 postService:
-  enabled: true
-
   replicas: 3
-
   image: docker.io/duchuyvp123/post-service:latest
-
   containerPort: 8000
-
   service:
     type: ClusterIP
     port: 8000
+
+namespace: default
