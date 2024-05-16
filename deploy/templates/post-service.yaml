@@ -1,37 +1,37 @@
 {{ if .Values.postService.enabled }}
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: post-service
-#   labels:
-#     app: post-service
-#     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-#     release: "{{ .Release.Name }}"
-#     heritage: "{{ .Release.Service }}"
-# spec:
-#   replicas: {{ .Values.postService.replicas }}
-#   revisionHistoryLimit: 3
-#   selector:
-#     matchLabels:
-#       app: {{ .Chart.Name }}
-#   template:
-#     metadata:
-#       labels:
-#         app: {{ .Chart.Name }}
-#     spec:
-#       containers:
-#         - name: {{ .Chart.Name }}
-#           image: "{{ .Values.postService.image }}"
-#           env: []
-#           envFrom:
-#             - secretRef:
-#                 name: post-service-secret
-#             - secretRef:
-#                 name: postgres-secret
-#           ports:
-#             - name: http
-#               containerPort: {{ .Values.postService.containerPort }}
-#               protocol: TCP
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-service
+  labels:
+    app: post-service
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.postService.replicas }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.postService.image }}"
+          env: []
+          envFrom:
+            - secretRef:
+                name: post-service-secret
+            - secretRef:
+                name: postgres-secret
+          ports:
+            - name: http
+              containerPort: {{ .Values.postService.containerPort }}
+              protocol: TCP
 # ---
 # apiVersion: apps/v1
 # kind: Service
