@@ -125,7 +125,7 @@ metadata:
     heritage: "{{ .Release.Service }}"
 type: Opaque
 data:
-  API_VERSION: {{ .Chart.appVersion | b64enc }}
+  API_VERSION: {{ .Chart.AppVersion | b64enc }}
 ---
 apiVersion: apps/v1
 kind: Secret
