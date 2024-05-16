@@ -28,7 +28,7 @@ spec:
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
-  local:
+  hostPath:
     path: /tmp/data/postgresql
 ---
 apiVersion: v1

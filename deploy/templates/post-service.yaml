@@ -46,30 +46,30 @@ spec:
     - port: {{ .Values.postService.service.port }}
       targetPort: {{ .Values.postService.service.port }}
       protocol: TCP
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: post-service
-  namespace: {{ .Values.namespace }}
-  labels:
-    app: post-service
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-spec:
-  rules:
-    - host: {{ .Values.host }}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: post-service
-                port:
-                  number: {{ .Values.postService.service.port }}
-  tls:
-    - hosts:
-        - chart-example.local
-      secretName: chart-example-tls
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: post-service
+#   namespace: {{ .Values.namespace }}
+#   labels:
+#     app: post-service
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+#     kubernetes.io/tls-acme: "true"
+# spec:
+#   rules:
+#     - host: {{ .Values.host }}
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: post-service
+#                 port:
+#                   number: {{ .Values.postService.service.port }}
+#   tls:
+#     - hosts:
+#         - chart-example.local
+#       secretName: chart-example-tls
