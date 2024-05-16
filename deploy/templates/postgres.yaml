@@ -5,9 +5,6 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app: postgres
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
 spec:
   accessModes:
     - ReadWriteOnce
@@ -24,9 +21,6 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app: postgres
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
 data:
   initdb.sh: |-
     #!/bin/bash
@@ -43,9 +37,6 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app: postgres
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
 spec:
   selector:
     app: postgres
@@ -61,9 +52,6 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app: postgres
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
 spec:
   replicas: 1
   selector:
