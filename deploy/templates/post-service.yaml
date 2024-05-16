@@ -121,8 +121,6 @@ metadata:
   labels:
     app: post-service
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
 type: Opaque
 data:
   API_VERSION: {{ .Chart.AppVersion | b64enc }}
@@ -134,8 +132,6 @@ metadata:
   labels:
     app: postgres
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
 type: Opaque
 data:
   POSTGRES_USER: YWRtaW4=
