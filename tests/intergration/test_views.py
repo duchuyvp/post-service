@@ -229,7 +229,7 @@ def test_comment_exceed_3_layers(bus, comment):
 
 def test_get_posts(bus):
     uniq = str(uuid.uuid4())
-    params = schema.GetPostParamRequest(
+    params = schema.GetPostsRequest(
         title=uniq + " test_search_title",
         content="test_content",
         author_id="test_search_author_id",

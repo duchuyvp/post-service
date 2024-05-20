@@ -6,7 +6,7 @@ import contextlib
 from sqlalchemy import create_engine
 from sqlalchemy import orm
 
-from src.app import config
+from src.app.config import settings
 from src.app.adapters import repository
 from src.app.domain import model
 
@@ -42,7 +42,7 @@ class AbstractUnitOfWork(abc.ABC):
         raise NotImplementedError
 
 
-POSTGRES_URI = f"postgresql://{config.settings.POSTGRES_USER}:{config.settings.POSTGRES_PASSWORD}@{config.settings.POSTGRES_HOST}:{config.settings.POSTGRES_PORT}/{config.settings.POSTGRES_DB}"
+POSTGRES_URI = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
 DEFAULT_SESSION_FACTORY = orm.sessionmaker(
     bind=create_engine(
         POSTGRES_URI,

@@ -10,5 +10,5 @@ async def authorise_user(user_id: str = fastapi.Header(...)) -> str:
     return user_id
 
 
-def get_query_params(params: schema.GetPostParamRequest = fastapi.Depends()):
+def get_query_params(params: schema.GetPostsRequest = fastapi.Depends()):
     return params

@@ -1,3 +1,6 @@
+import io
+import tempfile
+import fastapi
 import pydantic
 
 
@@ -5,6 +8,8 @@ class Command(pydantic.BaseModel):
     """
     Base class for all commands.
     """
+
+    model_config = pydantic.ConfigDict(arbitrary_types_allowed=True)
 
 
 class CreatePostCommand(Command):
@@ -15,6 +20,7 @@ class CreatePostCommand(Command):
     title: str
     content: str
     author_id: str
+    images: list[fastapi.UploadFile]
 
 
 class EditPostCommand(Command):

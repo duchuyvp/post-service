@@ -19,16 +19,16 @@ class Settings(pydantic_settings.BaseSettings):
         validate_assignment=True,
     )
 
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
-    POSTGRES_HOST: str
-    POSTGRES_PORT: int
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_DB: str = "postgres"
+    POSTGRES_HOST: str = "postgres"
+    POSTGRES_PORT: int = 5432
 
-    MINIO_ACCESS_KEY: str
-    MINIO_SECRET_KEY: str
-    MINIO_HOST: str
-    MINIO_PORT: int
+    MINIO_ACCESS_KEY: str = "minio"
+    MINIO_SECRET_KEY: str = "minio123"
+    MINIO_HOST: str = "minio"
+    MINIO_PORT: int = 9000
 
     REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379

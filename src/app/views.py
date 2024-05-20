@@ -51,7 +51,7 @@ def get_reply_comments(comment_id: str, uow: unit_of_work.AbstractUnitOfWork):
         return [comment.model_dump() for comment in comments]
 
 
-def get_posts(params: schema.GetPostParamRequest, uow: unit_of_work.AbstractUnitOfWork):
+def get_posts(params: schema.GetPostsRequest, uow: unit_of_work.AbstractUnitOfWork):
     """
     Get all posts.
     """

@@ -1,15 +1,66 @@
 import fastapi
 import pydantic
+from typing import Annotated
 
 
 class CreatePostRequest(pydantic.BaseModel):
-    title: str
-    content: str
+    title: Annotated[str, fastapi.Form(...)]
+    content: Annotated[str, fastapi.Form(...)]
+    images: Annotated[list[fastapi.UploadFile], fastapi.Form()] = []
+
+
+class GetPostRequest(pydantic.BaseModel):
+    id: Annotated[str, fastapi.Path(...)]
 
 
 class EditPostRequest(pydantic.BaseModel):
-    title: str
-    content: str
+    id: Annotated[str, fastapi.Path(...)]
+    title: Annotated[str, fastapi.Form(...)]
+    content: Annotated[str, fastapi.Form(...)]
+
+
+class DeletePostRequest(pydantic.BaseModel):
+    id: Annotated[str, fastapi.Path(...)]
+
+
+class LikePostRequest(pydantic.BaseModel):
+    id: Annotated[str, fastapi.Path(...)]
+
+
+class CommentRequest(pydantic.BaseModel):
+    id: Annotated[str, fastapi.Path(...)]
+    content: Annotated[str, fastapi.Form(...)]
+
+
+class ReplyRequest(pydantic.BaseModel):
+    id: Annotated[str, fastapi.Path(...)]
+    content: Annotated[str, fastapi.Form(...)]
+
+
+class DeleteCommentRequest(pydantic.BaseModel):
+    id: Annotated[str, fastapi.Path(...)]
+
+
+class LikeCommentRequest(pydantic.BaseModel):
+    id: Annotated[str, fastapi.Path(...)]
+
+
+class GetPostCommentRequest(pydantic.BaseModel):
+    id: Annotated[str, fastapi.Path(...)]
+
+
+class GetCommentReplyRequest(pydantic.BaseModel):
+    id: Annotated[str, fastapi.Path(...)]
+
+
+class GetPostsRequest(pydantic.BaseModel):
+    title: Annotated[str | None, fastapi.Query(None)]
+    content: Annotated[str | None, fastapi.Query(None)]
+    author_id: Annotated[str | None, fastapi.Query(None)]
+
+    order: Annotated[list[str], fastapi.Query(["-created_time"], alias="order[]")]
+    limit: Annotated[int, fastapi.Query(10)]
+    offset: Annotated[int, fastapi.Query(0)]
 
 
 class PostResponse(pydantic.BaseModel):
@@ -22,21 +73,7 @@ class PostResponse(pydantic.BaseModel):
     version: int
 
 
-class CommentRequest(pydantic.BaseModel):
-    content: str
-
-
 class CommentResponse(pydantic.BaseModel):
     content: str
     author_id: str
     created_time: str
-
-
-class GetPostParamRequest(pydantic.BaseModel):
-    title: str | None = None
-    content: str | None = None
-    author_id: str | None = None
-
-    order: list[str] = fastapi.Query(["-created_time"])
-    limit: int = 100
-    offset: int = 0
