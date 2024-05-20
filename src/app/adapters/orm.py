@@ -52,6 +52,7 @@ posts = sa.Table(
     sa.Column("version", sa.Integer),
     sa.Column("created_time", sa.TIMESTAMP),
     sa.Column("updated_time", sa.TIMESTAMP),
+    sa.Column("images", sa.ARRAY(sa.String)),
 )
 
 

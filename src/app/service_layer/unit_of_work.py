@@ -3,6 +3,7 @@ from __future__ import annotations
 import abc
 import contextlib
 
+import minio
 from sqlalchemy import create_engine
 from sqlalchemy import orm
 
@@ -14,6 +15,7 @@ from src.app.domain import model
 class AbstractUnitOfWork(abc.ABC):
     posts: repository.AbstractRepository
     comments: repository.AbstractRepository
+    fileStorage: repository.AbstractRepository
 
     @contextlib.contextmanager
     def unit_of_work(self):
@@ -49,6 +51,11 @@ DEFAULT_SESSION_FACTORY = orm.sessionmaker(
         isolation_level="REPEATABLE READ",
     )
 )
+DEFAUL_MINIO_CLIENT = minio.Minio(
+    endpoint=f"{settings.MINIO_HOST}:{settings.MINIO_PORT}",
+    access_key=settings.MINIO_ACCESS_KEY,
+    secret_key=settings.MINIO_SECRET_KEY,
+)
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
@@ -61,6 +68,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             self.session = self.session_factory()
             self.posts = repository.SqlAlchemyRepository(self.session, model.Post)
             self.comments = repository.SqlAlchemyRepository(self.session, model.Comment)
+            self.minio = repository.MinioRepository(DEFAUL_MINIO_CLIENT)
             yield self
         except:
             self.rollback()

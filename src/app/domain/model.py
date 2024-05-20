@@ -189,6 +189,7 @@ class Post(Table):
         self.version = 1
         self.created_time = datetime.datetime.now()
         self.updated_time = datetime.datetime.now()
+        self.images = []  # type: list[str]
         # self.likes = []  # type: list[Like]
         # self.comments = []  # type: list[Comment]
         self.events = []  # type: list[events.Event]

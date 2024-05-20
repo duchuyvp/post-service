@@ -1,3 +1,4 @@
+import fastapi
 import pydantic
 
 
@@ -13,6 +14,7 @@ class PostCreatedEvent(Event):
     """
 
     post_id: str
+    images: list[fastapi.UploadFile]
 
 
 class PostEditedEvent(Event):

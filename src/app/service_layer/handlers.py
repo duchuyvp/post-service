@@ -23,7 +23,7 @@ def create_post(cmd: commands.CreatePostCommand, uow: unit_of_work.AbstractUnitO
         )
         uow_ctx.posts.add(new_post)
         uow_ctx.commit()
-        new_post.events.append(events.PostCreatedEvent(post_id=new_post.id))
+        new_post.events.append(events.PostCreatedEvent(post_id=new_post.id, images=cmd.images))
 
 
 def edit_post(cmd: commands.EditPostCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -135,8 +135,11 @@ def do_nothing(events: events.Event, uow: unit_of_work.AbstractUnitOfWork):
 
 def handle_post_created(events: events.PostCreatedEvent, uow: unit_of_work.AbstractUnitOfWork):
     """
-    Handle the post created event.
+    Handle the post created event. Upload images to the storage.
     """
+
+    # Upload images to the storage.
+    # uow.storage.upload(images=events.images)
 
 
 def handle_comment_created(events: events.CommentCreatedEvent, uow: unit_of_work.AbstractUnitOfWork):
