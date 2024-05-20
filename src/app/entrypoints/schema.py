@@ -1,6 +1,7 @@
+from typing import Annotated
+
 import fastapi
 import pydantic
-from typing import Annotated
 
 
 class CreatePostRequest(pydantic.BaseModel):
