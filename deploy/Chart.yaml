@@ -1,6 +1,0 @@
-apiVersion: v2
-name: post-service-app
-description: A Helm chart for Kubernetes
-version: 0.1.0
-appVersion: "build-1"
-type: application
