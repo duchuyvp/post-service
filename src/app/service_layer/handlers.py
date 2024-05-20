@@ -4,6 +4,8 @@ This module contains the handlers for post-related commands.
 
 from __future__ import annotations
 
+import uuid
+
 from src.app.domain import commands
 from src.app.domain import events
 from src.app.domain import model
@@ -140,6 +142,15 @@ def handle_post_created(events: events.PostCreatedEvent, uow: unit_of_work.Abstr
 
     # Upload images to the storage.
     # uow.storage.upload(images=events.images)
+    with uow.unit_of_work() as uow_ctx:
+        for image in events.images:
+            id = str(uuid.uuid4())
+            path = f"post/{events.post_id}/{id}-{image.filename}"
+            err_code = uow_ctx.minio.add(path, image.file, content_type=image.content_type)
+            if err_code == 0:
+                post = uow_ctx.posts.get(events.post_id)
+                post.images.append(path)
+        uow_ctx.commit()
 
 
 def handle_comment_created(events: events.CommentCreatedEvent, uow: unit_of_work.AbstractUnitOfWork):

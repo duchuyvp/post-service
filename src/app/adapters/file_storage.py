@@ -4,22 +4,30 @@ This module contains the AbstractRepository class and its subclasses.
 
 import abc
 import datetime
+import tempfile
 import typing as t
 
 import minio
+import minio.helpers
 
 
 class AbstractFileStorage(abc.ABC):
     def __init__(self):
+        self.BUCKET_NAME = "posts"
+
         """
         Initialize the AbstractFileStorage class.
         """
 
-    def add(self, f) -> None:
+    def add(self, path: str, f: tempfile.SpooledTemporaryFile, **kwargs) -> int:
         """
         Add a file to the FileStorage.
         """
-        self._add(f)
+        try:
+            self._add(path, f, **kwargs)
+        except Exception as e:
+            return 1
+        return 0
 
     def get(self, path: str) -> str:
         """
@@ -41,7 +49,7 @@ class AbstractFileStorage(abc.ABC):
         self._delete(path)
 
     @abc.abstractmethod
-    def _add(self, f):
+    def _add(self, path: str, f: tempfile.SpooledTemporaryFile, **kwargs):
         """
         Abstract method to add a file to the FileStorage.
         """
@@ -55,7 +63,7 @@ class AbstractFileStorage(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _edit(self, path: str, f):
+    def _edit(self, path: str, f: tempfile.SpooledTemporaryFile):
         """
         Abstract method to upload a replacement file to the FileStorage by path.
         """
@@ -70,18 +78,29 @@ class AbstractFileStorage(abc.ABC):
 
 
 class MinIOFileStorage(AbstractFileStorage):
-    def __init__(self):
+
+    def __init__(self, client: minio.Minio):
         """
         Initialize the MinIOFileStorage class.
         """
-        self.instance = None
         super().__init__()
 
-    def _add(self, f):
+        self.client = client
+        if not self.client.bucket_exists(self.BUCKET_NAME):
+            self.client.make_bucket(self.BUCKET_NAME)
+
+    def _add(self, path: str, f: tempfile.SpooledTemporaryFile, **kwargs) -> int:
         """
         Add a file to the FileStorage.
         """
-        raise NotImplementedError
+        self.client.put_object(
+            bucket_name=self.BUCKET_NAME,
+            object_name=path,
+            data=f,
+            length=f.tell(),
+            **kwargs,
+        )
+        return 0
 
     def _get(self, path: str):
         """
@@ -89,7 +108,7 @@ class MinIOFileStorage(AbstractFileStorage):
         """
         raise NotImplementedError
 
-    def _edit(self, path: str, f):
+    def _edit(self, path: str, f: tempfile.SpooledTemporaryFile):
         """
         Upload a replacement file to the FileStorage by path.
         """

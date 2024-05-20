@@ -4,13 +4,11 @@ This module contains the AbstractRepository class and its subclasses.
 
 import abc
 import datetime
-import tempfile
 import typing as t
 
 from sqlalchemy import orm
 
 from src.app.domain import model
-import minio
 
 
 class AbstractRepository(abc.ABC):
@@ -156,36 +154,3 @@ class SqlAlchemyRepository(AbstractRepository):
         Use to execute complex queries.
         """
         return self.session.query(self.model)
-
-
-class MinioRepository(AbstractRepository):
-    def __init__(self, client: minio.Minio):
-        """
-        Initialize the MinIOFileStorage class.
-        """
-        self.client = client
-        super().__init__()
-
-    def _add(self, f: tempfile.SpooledTemporaryFile):
-        """
-        Add a file to the FileStorage.
-        """
-        raise NotImplementedError
-
-    def _get(self, path: str):
-        """
-        Get a presigned URL from the FileStorage by path.
-        """
-        raise NotImplementedError
-
-    def _edit(self, path: str, f: tempfile.SpooledTemporaryFile):
-        """
-        Upload a replacement file to the FileStorage by path.
-        """
-        raise NotImplementedError
-
-    def _delete(self, path: str):
-        """
-        Delete from the FileStorage by path.
-        """
-        raise NotImplementedError

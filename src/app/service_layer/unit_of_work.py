@@ -2,20 +2,22 @@ from __future__ import annotations
 
 import abc
 import contextlib
+import typing as t
 
 import minio
 from sqlalchemy import create_engine
 from sqlalchemy import orm
 
-from src.app.config import settings
+from src.app.adapters import file_storage
 from src.app.adapters import repository
+from src.app.config import settings
 from src.app.domain import model
 
 
 class AbstractUnitOfWork(abc.ABC):
     posts: repository.AbstractRepository
     comments: repository.AbstractRepository
-    fileStorage: repository.AbstractRepository
+    minio: file_storage.AbstractFileStorage
 
     @contextlib.contextmanager
     def unit_of_work(self):
@@ -55,12 +57,14 @@ DEFAUL_MINIO_CLIENT = minio.Minio(
     endpoint=f"{settings.MINIO_HOST}:{settings.MINIO_PORT}",
     access_key=settings.MINIO_ACCESS_KEY,
     secret_key=settings.MINIO_SECRET_KEY,
+    secure=False,
 )
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
-    def __init__(self, session_factory=DEFAULT_SESSION_FACTORY):
+    def __init__(self, session_factory=DEFAULT_SESSION_FACTORY, minio_client=DEFAUL_MINIO_CLIENT):
         self.session_factory = session_factory
+        self.minio_client = minio_client
 
     @contextlib.contextmanager
     def unit_of_work(self):
@@ -68,7 +72,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             self.session = self.session_factory()
             self.posts = repository.SqlAlchemyRepository(self.session, model.Post)
             self.comments = repository.SqlAlchemyRepository(self.session, model.Comment)
-            self.minio = repository.MinioRepository(DEFAUL_MINIO_CLIENT)
+            self.minio = file_storage.MinIOFileStorage(self.minio_client)
             yield self
         except:
             self.rollback()
