@@ -42,9 +42,10 @@ class AbstractUnitOfWork(abc.ABC):
         raise NotImplementedError
 
 
+POSTGRES_URI = f"postgresql://{config.settings.POSTGRES_USER}:{config.settings.POSTGRES_PASSWORD}@{config.settings.POSTGRES_HOST}:{config.settings.POSTGRES_PORT}/{config.settings.POSTGRES_DB}"
 DEFAULT_SESSION_FACTORY = orm.sessionmaker(
     bind=create_engine(
-        config.settings.POSTGRES_URI,
+        POSTGRES_URI,
         isolation_level="REPEATABLE READ",
     )
 )

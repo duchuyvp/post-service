@@ -19,8 +19,18 @@ class Settings(pydantic_settings.BaseSettings):
         validate_assignment=True,
     )
 
-    POSTGRES_URI: str = "postgresql://postgres:postgres@localhost:5432/db"
-    REDIS_HOST: str = "localhost"
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
+    POSTGRES_HOST: str
+    POSTGRES_PORT: int
+
+    MINIO_ACCESS_KEY: str
+    MINIO_SECRET_KEY: str
+    MINIO_HOST: str
+    MINIO_PORT: int
+
+    REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379
 
     LOGGING_LEVEL: int = logging.INFO

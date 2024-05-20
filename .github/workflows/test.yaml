@@ -40,4 +40,13 @@ jobs:
         run: |
           poetry run pytest
         env:
-          POSTGRES_URI: postgresql://postgres:postgres@localhost:5432/test_db
+          POSTGRES_DB: test_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+
+          MINIO_ACCESS_KEY: minio
+          MINIO_SECRET_KEY: minio123456
+          MINIO_HOST: localhost
+          MINIO_PORT: 9000
