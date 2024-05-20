@@ -48,6 +48,15 @@ services:
     volumes:
       - pg:/var/lib/postgresql/data
 
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123456
+    command: server /data --console-address ":9001"
   # redis:
   #   image: redis
   #   ports:
