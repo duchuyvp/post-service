@@ -190,10 +190,24 @@ def get_replies(
 
 @app.get("/posts")
 def get_posts(
-    request: schema.GetPostsRequest = fastapi.Depends(),
+    # request: schema.GetPostsRequest = fastapi.Depends(),
+    title: str | None = None,
+    content: str | None = None,
+    author_id: str | None = None,
+    order: t.Annotated[list[str] | None, fastapi.Query()] = ["-created_time"],
+    limit: int = 10,
+    offset: int = 0,
 ) -> list[schema.PostResponse]:
     """
     Get all posts.
     """
+    request = schema.GetPostsRequest(
+        title=title,
+        content=content,
+        author_id=author_id,
+        order=order,
+        limit=limit,
+        offset=offset,
+    )
     posts = views.get_posts(request, uow=bus.uow)
     return posts

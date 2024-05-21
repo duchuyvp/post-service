@@ -24,6 +24,15 @@ likes = sa.Table(
     sa.Column("created_time", sa.TIMESTAMP),
 )
 
+images = sa.Table(
+    "images",
+    metadata,
+    sa.Column("id", sa.String, primary_key=True),
+    sa.Column("path", sa.String),
+    sa.Column("post_id", sa.String),
+    sa.Column("created_time", sa.TIMESTAMP),
+)
+
 
 comments = sa.Table(
     "comments",
@@ -52,7 +61,6 @@ posts = sa.Table(
     sa.Column("version", sa.Integer),
     sa.Column("created_time", sa.TIMESTAMP),
     sa.Column("updated_time", sa.TIMESTAMP),
-    sa.Column("images", sa.ARRAY(sa.String)),
 )
 
 
@@ -68,6 +76,11 @@ def start_mappers() -> None:
     like_mapper = mapper_registry.map_imperatively(
         class_=model.Like,
         local_table=likes,
+    )
+
+    image_mapper = mapper_registry.map_imperatively(
+        class_=model.Image,
+        local_table=images,
     )
 
     comment_mapper = mapper_registry.map_imperatively(
@@ -117,6 +130,13 @@ def start_mappers() -> None:
             "likes": orm.relationship(
                 argument=like_mapper,
                 primaryjoin=(posts.c.id == orm.foreign(likes.c.post_id)),
+                backref="post",
+                collection_class=list,
+                lazy="select",
+            ),
+            "images": orm.relationship(
+                argument=image_mapper,
+                primaryjoin=(posts.c.id == orm.foreign(images.c.post_id)),
                 backref="post",
                 collection_class=list,
                 lazy="select",

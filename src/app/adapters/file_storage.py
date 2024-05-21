@@ -4,9 +4,11 @@ This module contains the AbstractRepository class and its subclasses.
 
 import abc
 import datetime
+import io
 import tempfile
 import typing as t
 
+import fastapi
 import minio
 import minio.helpers
 
@@ -19,7 +21,7 @@ class AbstractFileStorage(abc.ABC):
         Initialize the AbstractFileStorage class.
         """
 
-    def add(self, path: str, f: tempfile.SpooledTemporaryFile, **kwargs) -> int:
+    def add(self, path: str, f: fastapi.UploadFile, **kwargs) -> int:
         """
         Add a file to the FileStorage.
         """
@@ -49,7 +51,7 @@ class AbstractFileStorage(abc.ABC):
         self._delete(path)
 
     @abc.abstractmethod
-    def _add(self, path: str, f: tempfile.SpooledTemporaryFile, **kwargs):
+    def _add(self, path: str, f: fastapi.UploadFile, **kwargs):
         """
         Abstract method to add a file to the FileStorage.
         """
@@ -63,7 +65,7 @@ class AbstractFileStorage(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _edit(self, path: str, f: tempfile.SpooledTemporaryFile):
+    def _edit(self, path: str, f: fastapi.UploadFile):
         """
         Abstract method to upload a replacement file to the FileStorage by path.
         """
@@ -89,16 +91,17 @@ class MinIOFileStorage(AbstractFileStorage):
         if not self.client.bucket_exists(self.BUCKET_NAME):
             self.client.make_bucket(self.BUCKET_NAME)
 
-    def _add(self, path: str, f: tempfile.SpooledTemporaryFile, **kwargs) -> int:
+    def _add(self, path: str, f: fastapi.UploadFile, **kwargs) -> int:
         """
         Add a file to the FileStorage.
         """
+        file_data = f.file.read()
         self.client.put_object(
             bucket_name=self.BUCKET_NAME,
             object_name=path,
-            data=f,
-            length=f.tell(),
-            **kwargs,
+            data=io.BytesIO(file_data),
+            length=len(file_data),
+            content_type=f.content_type,
         )
         return 0
 
@@ -108,7 +111,7 @@ class MinIOFileStorage(AbstractFileStorage):
         """
         raise NotImplementedError
 
-    def _edit(self, path: str, f: tempfile.SpooledTemporaryFile):
+    def _edit(self, path: str, f: fastapi.UploadFile):
         """
         Upload a replacement file to the FileStorage by path.
         """

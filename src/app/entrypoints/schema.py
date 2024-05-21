@@ -59,7 +59,7 @@ class GetPostsRequest(pydantic.BaseModel):
     content: Annotated[str | None, fastapi.Query(None)]
     author_id: Annotated[str | None, fastapi.Query(None)]
 
-    order: Annotated[list[str], fastapi.Query(["-created_time"], alias="order[]")]
+    order: Annotated[list[str], fastapi.Query()]
     limit: Annotated[int, fastapi.Query(10)]
     offset: Annotated[int, fastapi.Query(0)]
 

@@ -17,6 +17,7 @@ from src.app.domain import model
 class AbstractUnitOfWork(abc.ABC):
     posts: repository.AbstractRepository
     comments: repository.AbstractRepository
+    images: repository.AbstractRepository
     minio: file_storage.AbstractFileStorage
 
     @contextlib.contextmanager
@@ -72,6 +73,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
             self.session = self.session_factory()
             self.posts = repository.SqlAlchemyRepository(self.session, model.Post)
             self.comments = repository.SqlAlchemyRepository(self.session, model.Comment)
+            self.images = repository.SqlAlchemyRepository(self.session, model.Image)
             self.minio = file_storage.MinIOFileStorage(self.minio_client)
             yield self
         except:

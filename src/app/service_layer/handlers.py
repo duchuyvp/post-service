@@ -143,14 +143,18 @@ def handle_post_created(events: events.PostCreatedEvent, uow: unit_of_work.Abstr
     # Upload images to the storage.
     # uow.storage.upload(images=events.images)
     with uow.unit_of_work() as uow_ctx:
-        for image in events.images:
-            id = str(uuid.uuid4())
-            path = f"post/{events.post_id}/{id}-{image.filename}"
-            err_code = uow_ctx.minio.add(path, image.file, content_type=image.content_type)
+        images = uow_ctx.images
+        post = uow_ctx.posts.get(events.post_id)
+        for file in events.images:
+            path = f"posts/{post.id}/{file.filename}"
+            image = post.add_image(path)
+            images.add(image)
+            err_code = uow_ctx.minio.add(path, file)
             if err_code == 0:
-                post = uow_ctx.posts.get(events.post_id)
-                post.images.append(path)
-        uow_ctx.commit()
+                uow_ctx.commit()
+            else:
+                # Notification.send(f"Failed to upload image {file.filename}.")
+                uow_ctx.rollback()
 
 
 def handle_comment_created(events: events.CommentCreatedEvent, uow: unit_of_work.AbstractUnitOfWork):

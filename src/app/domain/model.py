@@ -23,6 +23,45 @@ class Table:
         raise NotImplementedError
 
 
+class Image(Table):
+    """
+    An image.
+    Every attr and method is self-explanatory.
+    """
+
+    def __init__(self, path: str, post_id: str):
+        self.id = str(uuid.uuid4())
+        self.path = path
+        self.post_id = post_id
+        self.events = []  # type: list[events.Event]
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Image):
+            return False
+        return self.path == other.path
+
+    def __hash__(self) -> int:
+        return hash(self.path)
+
+    def __repr__(self) -> str:
+        return f"<Image {self.path}>"
+
+    @staticmethod
+    def create(path: str, post_id: str) -> Image:
+        image = Image(path, post_id)
+        return image
+
+    def delete(self) -> None:
+        """ """
+
+    def model_dump(self) -> dict:
+        return {
+            "id": str(self.id),
+            "image": self.path,
+            # will get presigned url
+        }
+
+
 class Like(Table):
     """
     A like.
@@ -189,13 +228,13 @@ class Post(Table):
         self.version = 1
         self.created_time = datetime.datetime.now()
         self.updated_time = datetime.datetime.now()
-        self.images = []  # type: list[str]
         # self.likes = []  # type: list[Like]
         # self.comments = []  # type: list[Comment]
         self.events = []  # type: list[events.Event]
 
     likes: list[Like]
     comments: list[Comment]
+    images: list[Image]
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Post):
@@ -238,6 +277,11 @@ class Post(Table):
         comment = Comment.create(content, author_id, 0, self.id, None)
         self.comments.append(comment)
         return comment
+
+    def add_image(self, path: str) -> Image:
+        image = Image(path, self.id)
+        self.images.append(image)
+        return image
 
     def can_edit_or_delete(self, user_id: str) -> bool:
         return user_id == self.author_id

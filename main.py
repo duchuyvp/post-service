@@ -1,37 +1,21 @@
+import os
 from typing import List
 from typing import Optional
 
+from minio import Minio
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import RelationshipProperty
 
+from src.app.config import settings
 
-class Comment:
-    def __init__(self, id: Optional[int] = None, comment_id: Optional[int] = None, text: Optional[str] = None):
-        self.id = id
-        self.comment_id = comment_id
-        self.text = text  # Assuming you have a text attribute for the comment
+minio_host = f"{settings.MINIO_HOST}:{settings.MINIO_PORT}"
+minio = Minio(
+    endpoint=minio_host,
+    access_key=settings.MINIO_ACCESS_KEY,
+    secret_key=settings.MINIO_SECRET_KEY,
+    secure=False,
+)
 
-        # Do not manually initialize replies here; SQLAlchemy manages it
-        # self.replies: List['Comment'] = []  # Remove this initialization
 
-    # Type hint for replies attribute
-    replies: RelationshipProperty[List["Comment"]]
-
-    def add_reply(self, reply_text: str) -> "Comment":
-        """
-        Adds a reply to the current comment.
-
-        Parameters:
-            reply_text (str): The text of the reply.
-
-        Returns:
-            Comment: The newly created reply.
-        """
-        # Create a new Comment object representing the reply
-        reply = Comment(comment_id=self.id, text=reply_text)
-
-        # Append the reply to the list of replies using the relationship
-        self.replies.append(reply)
-
-        # Return the newly created reply for further use if needed
-        return reply
+if not minio.bucket_exists("appt"):
+    minio.make_bucket("appt")
