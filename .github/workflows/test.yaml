@@ -72,9 +72,9 @@ jobs:
           tags: ${{ secrets.REGISTRY_SERVER }}/${{ secrets.REGISTRY_USERNAME }}/post-service:${{ github.sha }}
 
       - run: |
-          IMAGE="${{ secrets.REGISTRY_SERVER }}/${{ secrets.REGISTRY_USERNAME }}/post-service"
+          IMAGE="${{ secrets.REGISTRY_SERVER }}\/${{ secrets.REGISTRY_USERNAME }}\/post-service"
           NEW_IMAGE_TAG="${{ secrets.REGISTRY_SERVER }}/${{ secrets.REGISTRY_USERNAME }}/post-service:${{ github.sha }}"
-          find . -type f \( -name "*values.yml" -o -name "*values.yaml" \) -exec sed -i "s|${IMAGE}:[^\"]*|${NEW_IMAGE_TAG}|g" {} +
+          find . -type f \( -name "*values.yml" -o -name "*values.yaml" \) -exec sed -i "s|${IMAGE}:.*|${NEW_IMAGE_TAG}|g" {} \;
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git add .
