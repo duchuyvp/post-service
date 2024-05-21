@@ -21,7 +21,7 @@ class CreatePostCommand(Command):
     title: str
     content: str
     author_id: str
-    images: list[fastapi.UploadFile]
+    images: list[fastapi.UploadFile] = []
 
 
 class EditPostCommand(Command):
