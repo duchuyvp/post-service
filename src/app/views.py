@@ -12,7 +12,10 @@ def get_post(post_id: str, uow: unit_of_work.AbstractUnitOfWork):
     """
     with uow.unit_of_work() as uow_ctx:
         post = uow_ctx.posts.get(post_id)
-        return post.model_dump()
+        result = post.model_dump()
+        for image in result["images"]:
+            image["link"] = uow_ctx.minio.get(image["path"])
+        return result
 
 
 def find_post(title: str, uow: unit_of_work.AbstractUnitOfWork):

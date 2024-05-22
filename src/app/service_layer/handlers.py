@@ -140,8 +140,6 @@ def handle_post_created(events: events.PostCreatedEvent, uow: unit_of_work.Abstr
     Handle the post created event. Upload images to the storage.
     """
 
-    # Upload images to the storage.
-    # uow.storage.upload(images=events.images)
     with uow.unit_of_work() as uow_ctx:
         images = uow_ctx.images
         post = uow_ctx.posts.get(events.post_id)

@@ -57,7 +57,7 @@ class Image(Table):
     def model_dump(self) -> dict:
         return {
             "id": str(self.id),
-            "image": self.path,
+            "path": self.path,
             # will get presigned url
         }
 
@@ -293,6 +293,7 @@ class Post(Table):
             "author_id": self.author_id,
             "content": self.content,
             "like_count": self.like_count,
+            "images": [image.model_dump() for image in self.images],
             "version": self.version,
             "created_time": self.created_time.isoformat(),
         }

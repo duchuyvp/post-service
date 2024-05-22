@@ -1,21 +1,6 @@
-import os
-from typing import List
-from typing import Optional
+import sqlalchemy as sa
 
-from minio import Minio
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import RelationshipProperty
+from src.app.adapters.orm import metadata
+from src.app.service_layer.unit_of_work import POSTGRES_URI
 
-from src.app.config import settings
-
-minio_host = f"{settings.MINIO_HOST}:{settings.MINIO_PORT}"
-minio = Minio(
-    endpoint=minio_host,
-    access_key=settings.MINIO_ACCESS_KEY,
-    secret_key=settings.MINIO_SECRET_KEY,
-    secure=False,
-)
-
-
-if not minio.bucket_exists("appt"):
-    minio.make_bucket("appt")
+metadata.create_all(bind=sa.create_engine(POSTGRES_URI))

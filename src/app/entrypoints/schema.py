@@ -64,6 +64,18 @@ class GetPostsRequest(pydantic.BaseModel):
     offset: Annotated[int, fastapi.Query(0)]
 
 
+class CommentResponse(pydantic.BaseModel):
+    content: str
+    author_id: str
+    created_time: str
+
+
+class ImageResponse(pydantic.BaseModel):
+    id: str
+    path: str
+    link: str
+
+
 class PostResponse(pydantic.BaseModel):
     id: str
     title: str
@@ -72,9 +84,4 @@ class PostResponse(pydantic.BaseModel):
     author_id: str
     like_count: int
     version: int
-
-
-class CommentResponse(pydantic.BaseModel):
-    content: str
-    author_id: str
-    created_time: str
+    images: list[ImageResponse]

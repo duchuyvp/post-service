@@ -58,7 +58,7 @@ class AbstractFileStorage(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _get(self, path: str):
+    def _get(self, path: str) -> str:
         """
         Abstract method to get a presigned URL from the FileStorage by path.
         """
@@ -105,11 +105,11 @@ class MinIOFileStorage(AbstractFileStorage):
         )
         return 0
 
-    def _get(self, path: str):
+    def _get(self, path: str) -> str:
         """
         Get a presigned URL from the FileStorage by path.
         """
-        raise NotImplementedError
+        return self.client.presigned_get_object(self.BUCKET_NAME, path)
 
     def _edit(self, path: str, f: fastapi.UploadFile):
         """

@@ -26,7 +26,7 @@ def test_create_post(user_id, bus):
     response = client.post(
         "/posts",
         headers={"user-id": user_id},
-        json={"title": "test 2e2 title", "content": "test e2e content"},
+        data={"title": "test 2e2 title", "content": "test e2e content"},
     )
 
     assert response.status_code == 201
@@ -58,7 +58,7 @@ def test_edit_post(bus, post_id, user_id):
     response = client.put(
         f"/posts/{post_id}",
         headers={"user-id": user_id},
-        json={"title": "new e2e title", "content": "new content"},
+        data={"title": "new e2e title", "content": "new content"},
     )
 
     assert response.status_code == 204
@@ -80,7 +80,7 @@ def test_comment_post(bus, post_id):
     response = client.post(
         f"/posts/{post_id}/comments",
         headers={"user-id": "test_user_id"},
-        json={"content": "test comment"},
+        data={"content": "test comment"},
     )
 
     assert response.status_code == 201
@@ -104,7 +104,7 @@ def test_reply_comment(bus, comment_id):
     response = client.post(
         f"/comments/{comment_id}/reply",
         headers={"user-id": "test_user_id"},
-        json={"content": "test reply comment"},
+        data={"content": "test reply comment"},
     )
 
     assert response.status_code == 201
