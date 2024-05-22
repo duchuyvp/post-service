@@ -24,13 +24,11 @@ jobs:
           --health-retries 5
 
       minio:
-        image: minio/minio
+        image: minio/minio:edge-cicd
         ports: ["9000:9000"]
         env:
           MINIO_ACCESS_KEY: minio
           MINIO_SECRET_KEY: minio123456
-        options: >
-          server /data
 
     steps:
       - uses: actions/checkout@v4
