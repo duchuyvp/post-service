@@ -8,7 +8,7 @@ import pydantic
 class CreatePostRequest:
     title: Annotated[str, fastapi.Form(...)]
     content: Annotated[str, fastapi.Form(...)]
-    images: Annotated[list[fastapi.UploadFile], fastapi.Form(default_factory=list)]
+    images: Annotated[list[fastapi.UploadFile], fastapi.File(default_factory=list)]
 
 
 @pydantic.dataclasses.dataclass

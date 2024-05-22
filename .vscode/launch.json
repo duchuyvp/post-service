@@ -21,14 +21,19 @@
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
-      "args": ["src.app.entrypoints.app:app", "--reload"]
+      "args": [
+        "src.app.entrypoints.app:app",
+        "--reload"
+      ]
     },
     {
       "name": "Pytest",
       "type": "debugpy",
       "request": "launch",
       "module": "pytest",
-      "args": ["${workspaceFolder}/tests"]
+      "args": [
+        "${workspaceFolder}/tests"
+      ]
     }
   ]
 }

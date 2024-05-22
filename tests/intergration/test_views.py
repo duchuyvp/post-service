@@ -1,6 +1,8 @@
+import os
 import uuid
 
 import pytest
+from fastapi import UploadFile
 from icecream import ic
 from sqlalchemy.orm import clear_mappers
 
@@ -276,3 +278,36 @@ def test_get_posts(bus):
     assert posts[1]["title"] == uniq + " test_search_title_1"
     assert posts[1]["content"] == "test_content_1"
     assert posts[1]["author_id"] == "test_search_author_id"
+
+
+def test_create_post_with_image(bus):
+    unique_title = str(uuid.uuid4())
+    file_path = "tests/assets/test_image.png"
+
+    image = UploadFile(
+        open(file_path, "rb"),
+        filename="test_image.png",
+        size=os.path.getsize(file_path),
+        headers={
+            "content-disposition": 'form-data; name="images"; filename="images.png"',
+            "content-type": "image/png",
+        },
+    )
+
+    cmd = commands.CreatePostCommand(
+        title=unique_title,
+        content="test content " + unique_title,
+        author_id="test_author_id",
+        image=[image],
+    )
+
+    bus.handle(cmd)
+    posts = views.find_post(unique_title, bus.uow)
+
+    assert len(posts) == 1
+
+    post = posts[0]
+    post = views.get_post(post["id"], bus.uow)
+
+    # assert len(post["images"]) == 1
+    # assert post["images"][0]["path"] == f"posts/{post['id']}/test_image.png"

@@ -19,7 +19,7 @@ def sql_session_factory():
     # engine = sa.create_engine("sqlite:///:memory:")
     orm.metadata.create_all(engine)
     yield sessionmaker(bind=engine)
-    orm.metadata.drop_all(engine)
+    # orm.metadata.drop_all(engine)
 
 
 @pytest.fixture(scope="session")

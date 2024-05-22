@@ -32,6 +32,19 @@ def test_create_post(user_id, bus):
     assert response.status_code == 201
 
 
+def test_create_post_with_image(user_id, bus):
+    file_name = "tests/assets/test_image.png"
+
+    response = client.post(
+        "/posts",
+        headers={"user-id": user_id},
+        data={"title": "test 2e2 title", "content": "test e2e content"},
+        files={"images": ("test_image.png", open(file_name, "rb"), "image/png")},
+    )
+
+    assert response.status_code == 201
+
+
 @pytest.fixture(scope="function")
 def post_id(bus):
     unique_title = str(uuid.uuid4())

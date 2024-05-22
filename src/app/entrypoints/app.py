@@ -1,6 +1,7 @@
 import typing as t
 
 import fastapi
+from icecream import ic
 
 from src.app import bootstrap
 from src.app import views
@@ -26,6 +27,7 @@ def create_post(
         author_id=user_id,
         images=request.images,
     )
+    ic(len(request.images))
     bus.handle(cmd)
 
     return fastapi.Response(status_code=201)
