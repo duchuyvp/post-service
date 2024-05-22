@@ -8,7 +8,7 @@ import pydantic
 class CreatePostRequest:
     title: Annotated[str, fastapi.Form(...)]
     content: Annotated[str, fastapi.Form(...)]
-    images: Annotated[list[fastapi.UploadFile], fastapi.Form()] = []
+    images: Annotated[list[fastapi.UploadFile], fastapi.Form(default_factory=list)]
 
 
 @pydantic.dataclasses.dataclass
@@ -71,7 +71,7 @@ class GetPostsRequest:
     content: Annotated[str | None, fastapi.Query(None)]
     author_id: Annotated[str | None, fastapi.Query(None)]
 
-    order: Annotated[list[str], fastapi.Query()]
+    order: Annotated[list[str], fastapi.Query(["-created_time"])]
     limit: Annotated[int, fastapi.Query(10)]
     offset: Annotated[int, fastapi.Query(0)]
 
