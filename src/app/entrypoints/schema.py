@@ -4,57 +4,69 @@ import fastapi
 import pydantic
 
 
-class CreatePostRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class CreatePostRequest:
     title: Annotated[str, fastapi.Form(...)]
     content: Annotated[str, fastapi.Form(...)]
     images: Annotated[list[fastapi.UploadFile], fastapi.Form()] = []
 
 
-class GetPostRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class GetPostRequest:
     id: Annotated[str, fastapi.Path(...)]
 
 
-class EditPostRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class EditPostRequest:
     id: Annotated[str, fastapi.Path(...)]
     title: Annotated[str, fastapi.Form(...)]
     content: Annotated[str, fastapi.Form(...)]
 
 
-class DeletePostRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class DeletePostRequest:
     id: Annotated[str, fastapi.Path(...)]
 
 
-class LikePostRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class LikePostRequest:
     id: Annotated[str, fastapi.Path(...)]
 
 
-class CommentRequest(pydantic.BaseModel):
-    id: Annotated[str, fastapi.Path(...)]
-    content: Annotated[str, fastapi.Form(...)]
-
-
-class ReplyRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class CommentRequest:
     id: Annotated[str, fastapi.Path(...)]
     content: Annotated[str, fastapi.Form(...)]
 
 
-class DeleteCommentRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class ReplyRequest:
+    id: Annotated[str, fastapi.Path(...)]
+    content: Annotated[str, fastapi.Form(...)]
+
+
+@pydantic.dataclasses.dataclass
+class DeleteCommentRequest:
     id: Annotated[str, fastapi.Path(...)]
 
 
-class LikeCommentRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class LikeCommentRequest:
     id: Annotated[str, fastapi.Path(...)]
 
 
-class GetPostCommentRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class GetPostCommentRequest:
     id: Annotated[str, fastapi.Path(...)]
 
 
-class GetCommentReplyRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class GetCommentReplyRequest:
     id: Annotated[str, fastapi.Path(...)]
 
 
-class GetPostsRequest(pydantic.BaseModel):
+@pydantic.dataclasses.dataclass
+class GetPostsRequest:
     title: Annotated[str | None, fastapi.Query(None)]
     content: Annotated[str | None, fastapi.Query(None)]
     author_id: Annotated[str | None, fastapi.Query(None)]
