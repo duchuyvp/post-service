@@ -30,8 +30,7 @@ jobs:
           MINIO_ACCESS_KEY: minio
           MINIO_SECRET_KEY: minio123456
         options: >-
-          --entrypoint sh
-          -c "server /data"
+          --command "server /data"
     steps:
       - uses: actions/checkout@v4
 
