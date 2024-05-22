@@ -15,11 +15,11 @@ pytest.register_assert_rewrite("tests.e2e.api_client")
 
 @pytest.fixture(scope="session")
 def sql_session_factory():
-    engine = sa.create_engine("postgresql://postgres:postgres@localhost:5432/test_db")
+    engine = sa.create_engine("postgresql://postgres:postgres@localhost:5432/db")
     # engine = sa.create_engine("sqlite:///:memory:")
-    orm.mapper_registry.metadata.create_all(engine)
+    orm.metadata.create_all(engine)
     yield sessionmaker(bind=engine)
-    orm.mapper_registry.metadata.drop_all(engine)
+    orm.metadata.drop_all(engine)
 
 
 @pytest.fixture(scope="session")
