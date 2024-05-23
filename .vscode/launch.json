@@ -23,7 +23,11 @@
       "module": "uvicorn",
       "args": [
         "src.app.entrypoints.app:app",
-        "--reload"
+        "--reload",
+        "--port",
+        "32000",
+        "--host",
+        "0.0.0.0"
       ]
     },
     {
