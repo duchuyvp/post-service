@@ -21,6 +21,15 @@ class CreatePostCommand(Command):
     title: str
     content: str
     author_id: str
+
+
+class AttachImageCommand(Command):
+    """
+    Command for attaching images to a post.
+    """
+
+    post_id: str
+    user_id: str
     images: list[fastapi.UploadFile] = []
 
 

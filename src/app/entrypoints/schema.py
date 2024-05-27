@@ -6,8 +6,13 @@ import pydantic
 
 @pydantic.dataclasses.dataclass
 class CreatePostRequest:
-    title: Annotated[str, fastapi.Form(...)]
-    content: Annotated[str, fastapi.Form(...)]
+    title: Annotated[str, fastapi.Body(...)]
+    content: Annotated[str, fastapi.Body(...)]
+
+
+@pydantic.dataclasses.dataclass
+class AttachImageRequest:
+    id: Annotated[str, fastapi.Path(...)]
     images: Annotated[list[fastapi.UploadFile], fastapi.File(default_factory=list)]
 
 
@@ -19,8 +24,8 @@ class GetPostRequest:
 @pydantic.dataclasses.dataclass
 class EditPostRequest:
     id: Annotated[str, fastapi.Path(...)]
-    title: Annotated[str, fastapi.Form(...)]
-    content: Annotated[str, fastapi.Form(...)]
+    title: Annotated[str, fastapi.Body(...)]
+    content: Annotated[str, fastapi.Body(...)]
 
 
 @pydantic.dataclasses.dataclass
@@ -36,13 +41,13 @@ class LikePostRequest:
 @pydantic.dataclasses.dataclass
 class CommentRequest:
     id: Annotated[str, fastapi.Path(...)]
-    content: Annotated[str, fastapi.Form(...)]
+    content: Annotated[str, fastapi.Body(..., embed=True)]
 
 
 @pydantic.dataclasses.dataclass
 class ReplyRequest:
     id: Annotated[str, fastapi.Path(...)]
-    content: Annotated[str, fastapi.Form(...)]
+    content: Annotated[str, fastapi.Body(..., embed=True)]
 
 
 @pydantic.dataclasses.dataclass

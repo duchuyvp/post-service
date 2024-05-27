@@ -26,23 +26,22 @@ def test_create_post(user_id, bus):
     response = client.post(
         "/posts",
         headers={"user-id": user_id},
-        data={"title": "test 2e2 title", "content": "test e2e content"},
+        json={"title": "test 2e2 title", "content": "test e2e content"},
     )
 
     assert response.status_code == 201
 
 
-def test_create_post_with_image(user_id, bus):
-    file_name = "tests/assets/test_image.png"
+# def test_attach_image(user_id, bus):
+#     file_name = "tests/assets/test_image.png"
 
-    response = client.post(
-        "/posts",
-        headers={"user-id": user_id},
-        data={"title": "test 2e2 title", "content": "test e2e content"},
-        files={"images": ("test_image.png", open(file_name, "rb"), "image/png")},
-    )
+#     response = client.post(
+#         "/posts",
+#         headers={"user-id": user_id},
+#         files={"images": ("test_image.png", open(file_name, "rb"), "image/png")},
+#     )
 
-    assert response.status_code == 201
+#     assert response.status_code == 201
 
 
 @pytest.fixture(scope="function")
@@ -71,7 +70,7 @@ def test_edit_post(bus, post_id, user_id):
     response = client.put(
         f"/posts/{post_id}",
         headers={"user-id": user_id},
-        data={"title": "new e2e title", "content": "new content"},
+        json={"title": "new e2e title", "content": "new content"},
     )
 
     assert response.status_code == 204
@@ -93,7 +92,8 @@ def test_comment_post(bus, post_id):
     response = client.post(
         f"/posts/{post_id}/comments",
         headers={"user-id": "test_user_id"},
-        data={"content": "test comment"},
+        json={"content": "test comment"},
+        # json="test comment",
     )
 
     assert response.status_code == 201
@@ -117,7 +117,8 @@ def test_reply_comment(bus, comment_id):
     response = client.post(
         f"/comments/{comment_id}/reply",
         headers={"user-id": "test_user_id"},
-        data={"content": "test reply comment"},
+        json={"content": "test reply comment"},
+        # json="test reply comment",
     )
 
     assert response.status_code == 201

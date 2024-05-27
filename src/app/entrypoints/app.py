@@ -25,9 +25,25 @@ def create_post(
         title=request.title,
         content=request.content,
         author_id=user_id,
+    )
+    bus.handle(cmd)
+
+    return fastapi.Response(status_code=201)
+
+
+@app.post("/posts/{id}/images", status_code=fastapi.status.HTTP_201_CREATED)
+def attach_image(
+    request: schema.AttachImageRequest = fastapi.Depends(),
+    user_id: str = fastapi.Header(),
+):
+    """
+    Attach images to a post.
+    """
+    cmd = commands.AttachImageCommand(
+        post_id=request.id,
+        user_id=user_id,
         images=request.images,
     )
-    ic(len(request.images))
     bus.handle(cmd)
 
     return fastapi.Response(status_code=201)

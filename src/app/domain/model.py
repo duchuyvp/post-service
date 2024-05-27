@@ -279,7 +279,7 @@ class Post(Table):
         return comment
 
     def add_image(self, path: str) -> Image:
-        image = Image(path, self.id)
+        image = Image.create(path, self.id)
         self.images.append(image)
         return image
 

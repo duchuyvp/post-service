@@ -25,7 +25,30 @@ def create_post(cmd: commands.CreatePostCommand, uow: unit_of_work.AbstractUnitO
         )
         uow_ctx.posts.add(new_post)
         uow_ctx.commit()
-        new_post.events.append(events.PostCreatedEvent(post_id=new_post.id, images=cmd.images))
+        new_post.events.append(events.PostCreatedEvent(post_id=new_post.id))
+
+
+def attach_image(cmd: commands.AttachImageCommand, uow: unit_of_work.AbstractUnitOfWork):
+    """
+    Handle the attach image command.
+    """
+
+    with uow.unit_of_work() as uow_ctx:
+        images = uow_ctx.images
+        post = uow_ctx.posts.get(cmd.post_id)
+        if post.can_edit_or_delete(user_id=cmd.user_id):
+            for file in cmd.images:
+                path = f"posts/{post.id}/{file.filename}"
+                image = post.add_image(path)
+                images.add(image)
+                err_code = uow_ctx.minio.add(path, file)
+                if err_code == 0:
+                    uow_ctx.commit()
+                else:
+                    # Notification.send(f"Failed to upload image {file.filename}.")
+                    uow_ctx.rollback()
+        else:
+            post.events.append(events.PostActionDeniedEvent(post_id=cmd.post_id, user_id=cmd.user_id))
 
 
 def edit_post(cmd: commands.EditPostCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -140,20 +163,6 @@ def handle_post_created(events: events.PostCreatedEvent, uow: unit_of_work.Abstr
     Handle the post created event. Upload images to the storage.
     """
 
-    with uow.unit_of_work() as uow_ctx:
-        images = uow_ctx.images
-        post = uow_ctx.posts.get(events.post_id)
-        for file in events.images:
-            path = f"posts/{post.id}/{file.filename}"
-            image = post.add_image(path)
-            images.add(image)
-            err_code = uow_ctx.minio.add(path, file)
-            if err_code == 0:
-                uow_ctx.commit()
-            else:
-                # Notification.send(f"Failed to upload image {file.filename}.")
-                uow_ctx.rollback()
-
 
 def handle_comment_created(events: events.CommentCreatedEvent, uow: unit_of_work.AbstractUnitOfWork):
     """
@@ -194,4 +203,5 @@ COMMAND_HANDLERS = {
     commands.DeletePostCommand: delete_post,
     commands.DeleteCommentCommand: delete_comment,
     commands.ReplyCommentCommand: reply_comment,
+    commands.AttachImageCommand: attach_image,
 }
