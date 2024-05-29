@@ -16,16 +16,16 @@ class AbstractRepository(abc.ABC):
         """
         Initialize the AbstractRepository class.
         """
-        self.seen = set()  # type: set[model.Table]
+        self.seen = set()  # type: set[model.BaseModel]
 
-    def add(self, r: model.Table) -> None:
+    def add(self, r: model.BaseModel) -> None:
         """
         Add a record to the repository.
         """
         self._add(r)
         self.seen.add(r)
 
-    def get(self, id: str) -> model.Table:
+    def get(self, id: str) -> model.BaseModel:
         """
         Get a record from the repository by ID.
         """
@@ -34,21 +34,21 @@ class AbstractRepository(abc.ABC):
             self.seen.add(r)
         return r
 
-    def edit(self, r: model.Table, _new: dict) -> None:
+    def edit(self, r: model.BaseModel, _new: dict) -> None:
         """
         Edit a record in the repository.
         """
         self._edit(r, _new)
         self.seen.add(r)
 
-    def delete(self, r: model.Table) -> None:
+    def delete(self, r: model.BaseModel) -> None:
         """
         Delete a record from the repository.
         """
         self._delete(r)
         self.seen.remove(r)
 
-    def query(self, **kwargs) -> list[model.Table]:
+    def query(self, **kwargs) -> list[model.BaseModel]:
         """
         Query the repository.
         """
@@ -65,7 +65,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _add(self, r: model.Table):
+    def _add(self, r: model.BaseModel):
         """
         Abstract method to add a record to the repository.
         """
@@ -79,14 +79,14 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _edit(self, r: model.Table, _new: dict):
+    def _edit(self, r: model.BaseModel, _new: dict):
         """
         Abstract method to edit a record in the repository.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _delete(self, r: model.Table):
+    def _delete(self, r: model.BaseModel):
         """
         Abstract method to delete a record from the repository.
         """
@@ -101,7 +101,7 @@ class AbstractRepository(abc.ABC):
 
 
 class SqlAlchemyRepository(AbstractRepository):
-    def __init__(self, session: orm.Session, model: t.Type[model.Table]):
+    def __init__(self, session: orm.Session, model: t.Type[model.BaseModel]):
         """
         Initialize the SqlAlchemyRepository class.
         """
@@ -109,20 +109,20 @@ class SqlAlchemyRepository(AbstractRepository):
         self.session = session
         self.model = model
 
-    def _add(self, r: model.Table):
+    def _add(self, r: model.BaseModel):
         """
         Add a record Table to the SQL Alchemy repository.
         """
         self.session.add(r)
 
-    def _get(self, r_id: str) -> model.Table:
+    def _get(self, r_id: str) -> model.BaseModel:
         """
         Get a record Table from the SQL Alchemy repository by ID.
         """
         _model = self.model
         return self.session.query(_model).filter_by(id=r_id).first()
 
-    def _edit(self, r: model.Table, _new: dict) -> None:
+    def _edit(self, r: model.BaseModel, _new: dict) -> None:
         """
         Edit a record Table in the SQL Alchemy repository.
         """
@@ -133,14 +133,14 @@ class SqlAlchemyRepository(AbstractRepository):
             r.version += 1
             r.updated_time = datetime.datetime.now()
 
-    def _delete(self, r: model.Table) -> None:
+    def _delete(self, r: model.BaseModel) -> None:
         """
         Delete a record Table from the SQL Alchemy repository.
         """
         _model = self.model
         self.session.delete(r)
 
-    def _query(self, **kwargs) -> list[model.Table]:
+    def _query(self, **kwargs) -> list[model.BaseModel]:
         """
         Query from SQL Alchemy repository.
         """

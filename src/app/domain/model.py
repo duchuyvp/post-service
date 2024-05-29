@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import abc
+import dataclasses
 import datetime
 import typing as t
 import uuid
@@ -10,12 +11,16 @@ from src.app.domain import events
 MAX_LEVEL_DEPTH = t.Literal[0, 1, 2, 3]
 
 
-class Table:
+@dataclasses.dataclass(init=False)
+class BaseModel:
     """
     A abstract table.
     """
 
-    events: list[events.Event] = []
+    id: str = dataclasses.field(default_factory=lambda: str(uuid.uuid4()))
+    events: list[events.Event] = dataclasses.field(default_factory=list)
+    created_time: datetime.datetime = dataclasses.field(default_factory=datetime.datetime.now)
+    updated_time: datetime.datetime = dataclasses.field(default_factory=datetime.datetime.now)
 
     @abc.abstractmethod
     def model_dump(self) -> dict:
@@ -23,17 +28,17 @@ class Table:
         raise NotImplementedError
 
 
-class Image(Table):
+class Image(BaseModel):
     """
     An image.
     Every attr and method is self-explanatory.
     """
 
     def __init__(self, path: str, post_id: str):
-        self.id = str(uuid.uuid4())
+
         self.path = path
         self.post_id = post_id
-        self.events = []  # type: list[events.Event]
+        # self.events = []  # type: list[events.Event]
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Image):
@@ -62,7 +67,7 @@ class Image(Table):
         }
 
 
-class Like(Table):
+class Like(BaseModel):
     """
     A like.
     Every attr and method is self-explanatory.
@@ -74,11 +79,11 @@ class Like(Table):
         post_id: str | None,
         comment_id: str | None,
     ):
-        self.id = str(uuid.uuid4())
+
         self.user_id = user_id
         self.post_id = post_id
         self.comment_id = comment_id
-        self.events = []  # type: list[events.Event]
+        # self.events = []  # type: list[events.Event]
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Like):
@@ -111,7 +116,7 @@ class Like(Table):
         }
 
 
-class Comment(Table):
+class Comment(BaseModel):
     """
     A comment.
     Every attr and method is self-explanatory.
@@ -125,7 +130,7 @@ class Comment(Table):
         post_id: str | None,
         comment_id: str | None,
     ):
-        self.id = str(uuid.uuid4())
+
         self.content = content
         self.author_id = author_id
         self.level = level
@@ -136,7 +141,7 @@ class Comment(Table):
         self.created_time = datetime.datetime.now()
         # self.replies = []  # type: list[Comment]
         # self.likes = []  # type: list[Like]
-        self.events = []  # type: list[events.Event]
+        # self.events = []  # type: list[events.Event]
 
     likes: list[Like]
     replies: list[Comment]
@@ -208,7 +213,7 @@ class Comment(Table):
         }
 
 
-class Post(Table):
+class Post(BaseModel):
     """
     A post.
     Every attr and method is self-explanatory.
@@ -220,17 +225,15 @@ class Post(Table):
         content: str,
         author_id: str,
     ):
-        self.id = str(uuid.uuid4())
+
         self.title = title
         self.content = content
         self.author_id = author_id
         self.like_count = 0
         self.version = 1
-        self.created_time = datetime.datetime.now()
-        self.updated_time = datetime.datetime.now()
         # self.likes = []  # type: list[Like]
         # self.comments = []  # type: list[Comment]
-        self.events = []  # type: list[events.Event]
+        self.events.append(events.PostCreatedEvent(post_id=self.id))
 
     likes: list[Like]
     comments: list[Comment]

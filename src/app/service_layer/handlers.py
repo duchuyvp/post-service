@@ -25,7 +25,7 @@ def create_post(cmd: commands.CreatePostCommand, uow: unit_of_work.AbstractUnitO
         )
         uow_ctx.posts.add(new_post)
         uow_ctx.commit()
-        new_post.events.append(events.PostCreatedEvent(post_id=new_post.id))
+        # new_post.events.append(events.PostCreatedEvent(post_id=new_post.id))
 
 
 def attach_image(cmd: commands.AttachImageCommand, uow: unit_of_work.AbstractUnitOfWork):
