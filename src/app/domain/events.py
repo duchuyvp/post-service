@@ -8,7 +8,7 @@ class Event(pydantic.BaseModel):
     """
 
 
-class PostCreatedEvent(Event):
+class CreatedPostEvent(Event):
     """
     Event representing the creation of a post.
     """
@@ -16,7 +16,7 @@ class PostCreatedEvent(Event):
     post_id: str
 
 
-class PostEditedEvent(Event):
+class EditedPostEvent(Event):
     """
     Event representing the editing of a post.
     """
@@ -25,7 +25,7 @@ class PostEditedEvent(Event):
     version: int
 
 
-class PostDeletedEvent(Event):
+class DeletedPostEvent(Event):
     """
     Event representing the deletion of a post.
     """
@@ -33,7 +33,7 @@ class PostDeletedEvent(Event):
     post_id: str
 
 
-class PostLikedEvent(Event):
+class LikedPostEvent(Event):
     """
     Event representing a like on a post.
     """
@@ -42,7 +42,7 @@ class PostLikedEvent(Event):
     user_id: str
 
 
-class PostUnlikedEvent(Event):
+class UnlikedPostEvent(Event):
     """
     Event representing an unlike on a post.
     """
@@ -51,7 +51,7 @@ class PostUnlikedEvent(Event):
     user_id: str
 
 
-class CommentLikedEvent(Event):
+class LikedCommentEvent(Event):
     """
     Event representing a like on a comment.
     """
@@ -60,7 +60,7 @@ class CommentLikedEvent(Event):
     user_id: str
 
 
-class CommentUnlikedEvent(Event):
+class UnlikedCommentEvent(Event):
     """
     Event representing an unlike on a comment.
     """
@@ -69,7 +69,7 @@ class CommentUnlikedEvent(Event):
     user_id: str
 
 
-class CommentCreatedEvent(Event):
+class CreatedCommentEvent(Event):
     """
     Event representing a comment on a post.
     """
@@ -78,7 +78,7 @@ class CommentCreatedEvent(Event):
     post_id: str
 
 
-class CommentRepliedEvent(Event):
+class RepliedCommentEvent(Event):
     """
     Event representing a reply to a comment.
     """
@@ -87,7 +87,7 @@ class CommentRepliedEvent(Event):
     post_id: str
 
 
-class CommentDeletedEvent(Event):
+class DeletedCommentEvent(Event):
     """
     Event representing the deletion of a comment.
     """
@@ -95,7 +95,7 @@ class CommentDeletedEvent(Event):
     comment_id: str
 
 
-class PostActionDeniedEvent(Event):
+class DeniedPostActionEvent(Event):
     """
     Event representing a denial of edit or delete a post.
     """
@@ -104,7 +104,7 @@ class PostActionDeniedEvent(Event):
     user_id: str
 
 
-class CommentActionDeniedEvent(Event):
+class DeniedCommentActionEvent(Event):
     """
     Event representing a denial of a comment delete.
     """

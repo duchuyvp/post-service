@@ -233,7 +233,7 @@ class Post(BaseModel):
         self.version = 1
         # self.likes = []  # type: list[Like]
         # self.comments = []  # type: list[Comment]
-        self.events.append(events.PostCreatedEvent(post_id=self.id))
+        self.events.append(events.CreatedPostEvent(post_id=self.id))
 
     likes: list[Like]
     comments: list[Comment]

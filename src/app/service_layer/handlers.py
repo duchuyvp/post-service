@@ -48,7 +48,7 @@ def attach_image(cmd: commands.AttachImageCommand, uow: unit_of_work.AbstractUni
                     # Notification.send(f"Failed to upload image {file.filename}.")
                     uow_ctx.rollback()
         else:
-            post.events.append(events.PostActionDeniedEvent(post_id=cmd.post_id, user_id=cmd.user_id))
+            post.events.append(events.DeniedPostActionEvent(post_id=cmd.post_id, user_id=cmd.user_id))
 
 
 def edit_post(cmd: commands.EditPostCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -61,9 +61,9 @@ def edit_post(cmd: commands.EditPostCommand, uow: unit_of_work.AbstractUnitOfWor
         if post.can_edit_or_delete(user_id=cmd.user_id):
             post.edit(new_title=cmd.title, new_content=cmd.content)
             uow_ctx.commit()
-            post.events.append(events.PostEditedEvent(post_id=cmd.post_id, version=post.version))
+            post.events.append(events.EditedPostEvent(post_id=cmd.post_id, version=post.version))
         else:
-            post.events.append(events.PostActionDeniedEvent(post_id=cmd.post_id, user_id=cmd.user_id))
+            post.events.append(events.DeniedPostActionEvent(post_id=cmd.post_id, user_id=cmd.user_id))
 
 
 def like_unlike_post(cmd: commands.LikePostCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -76,9 +76,9 @@ def like_unlike_post(cmd: commands.LikePostCommand, uow: unit_of_work.AbstractUn
         post.like_unlike(user_id=cmd.user_id)
         uow_ctx.commit()
         if cmd.user_id in post.likes:
-            post.events.append(events.PostLikedEvent(post_id=cmd.post_id, user_id=cmd.user_id))
+            post.events.append(events.LikedPostEvent(post_id=cmd.post_id, user_id=cmd.user_id))
         else:
-            post.events.append(events.PostUnlikedEvent(post_id=cmd.post_id, user_id=cmd.user_id))
+            post.events.append(events.UnlikedPostEvent(post_id=cmd.post_id, user_id=cmd.user_id))
 
 
 def like_unlike_comment(cmd: commands.LikeCommentCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -91,9 +91,9 @@ def like_unlike_comment(cmd: commands.LikeCommentCommand, uow: unit_of_work.Abst
         comment.like_unlike(user_id=cmd.user_id)
         uow_ctx.commit()
         if cmd.user_id in comment.likes:
-            comment.events.append(events.CommentLikedEvent(comment_id=cmd.comment_id, user_id=cmd.user_id))
+            comment.events.append(events.LikedCommentEvent(comment_id=cmd.comment_id, user_id=cmd.user_id))
         else:
-            comment.events.append(events.CommentUnlikedEvent(comment_id=cmd.comment_id, user_id=cmd.user_id))
+            comment.events.append(events.UnlikedCommentEvent(comment_id=cmd.comment_id, user_id=cmd.user_id))
 
 
 def comment_post(cmd: commands.CommentPostCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -106,7 +106,7 @@ def comment_post(cmd: commands.CommentPostCommand, uow: unit_of_work.AbstractUni
         comment = post.comment(content=cmd.content, author_id=cmd.user_id)
         uow_ctx.comments.add(comment)
         uow_ctx.commit()
-        post.events.append(events.CommentCreatedEvent(comment_id=comment.id, post_id=cmd.post_id))
+        post.events.append(events.CreatedCommentEvent(comment_id=comment.id, post_id=cmd.post_id))
 
 
 def delete_post(cmd: commands.DeletePostCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -119,9 +119,9 @@ def delete_post(cmd: commands.DeletePostCommand, uow: unit_of_work.AbstractUnitO
         if post.can_edit_or_delete(user_id=cmd.user_id):
             uow_ctx.posts.delete(post)
             uow_ctx.commit()
-            post.events.append(events.PostDeletedEvent(post_id=cmd.post_id))
+            post.events.append(events.DeletedPostEvent(post_id=cmd.post_id))
         else:
-            post.events.append(events.PostActionDeniedEvent(post_id=cmd.post_id, user_id=cmd.user_id))
+            post.events.append(events.DeniedPostActionEvent(post_id=cmd.post_id, user_id=cmd.user_id))
 
 
 def delete_comment(cmd: commands.DeleteCommentCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -134,9 +134,9 @@ def delete_comment(cmd: commands.DeleteCommentCommand, uow: unit_of_work.Abstrac
         if comment.can_edit_or_delete(user_id=cmd.user_id):
             uow_ctx.comments.delete(comment)
             uow_ctx.commit()
-            comment.events.append(events.CommentDeletedEvent(comment_id=cmd.comment_id))
+            comment.events.append(events.DeletedCommentEvent(comment_id=cmd.comment_id))
         else:
-            comment.events.append(events.CommentActionDeniedEvent(comment_id=cmd.comment_id, user_id=cmd.user_id))
+            comment.events.append(events.DeniedCommentActionEvent(comment_id=cmd.comment_id, user_id=cmd.user_id))
 
 
 def reply_comment(cmd: commands.ReplyCommentCommand, uow: unit_of_work.AbstractUnitOfWork):
@@ -149,7 +149,7 @@ def reply_comment(cmd: commands.ReplyCommentCommand, uow: unit_of_work.AbstractU
         reply = comment.reply(content=cmd.content, author_id=cmd.user_id)
         uow_ctx.comments.add(reply)
         uow_ctx.commit()
-        comment.events.append(events.CommentRepliedEvent(comment_id=reply.id, post_id=comment.post_id))
+        comment.events.append(events.RepliedCommentEvent(comment_id=reply.id, post_id=comment.post_id))
 
 
 def do_nothing(events: events.Event, uow: unit_of_work.AbstractUnitOfWork):
@@ -158,13 +158,13 @@ def do_nothing(events: events.Event, uow: unit_of_work.AbstractUnitOfWork):
     """
 
 
-def handle_post_created(events: events.PostCreatedEvent, uow: unit_of_work.AbstractUnitOfWork):
+def handle_post_created(events: events.CreatedPostEvent, uow: unit_of_work.AbstractUnitOfWork):
     """
     Handle the post created event. Upload images to the storage.
     """
 
 
-def handle_comment_created(events: events.CommentCreatedEvent, uow: unit_of_work.AbstractUnitOfWork):
+def handle_comment_created(events: events.CreatedCommentEvent, uow: unit_of_work.AbstractUnitOfWork):
     """
     Handle the comment created event.
     """
@@ -180,18 +180,18 @@ def handle_permission_denied(events: events.Event, uow: unit_of_work.AbstractUni
 
 
 EVENT_HANDLERS = {
-    events.PostCreatedEvent: [handle_post_created],
-    events.PostEditedEvent: [do_nothing],
-    events.PostDeletedEvent: [do_nothing],
-    events.PostLikedEvent: [do_nothing],
-    events.PostUnlikedEvent: [do_nothing],
-    events.CommentCreatedEvent: [do_nothing],
-    events.CommentLikedEvent: [do_nothing],
-    events.CommentUnlikedEvent: [do_nothing],
-    events.CommentRepliedEvent: [do_nothing],
-    events.CommentDeletedEvent: [do_nothing],
-    events.PostActionDeniedEvent: [handle_permission_denied],
-    events.CommentActionDeniedEvent: [handle_permission_denied],
+    events.CreatedPostEvent: [handle_post_created],
+    events.EditedPostEvent: [do_nothing],
+    events.DeletedPostEvent: [do_nothing],
+    events.LikedPostEvent: [do_nothing],
+    events.UnlikedPostEvent: [do_nothing],
+    events.CreatedCommentEvent: [do_nothing],
+    events.LikedCommentEvent: [do_nothing],
+    events.UnlikedCommentEvent: [do_nothing],
+    events.RepliedCommentEvent: [do_nothing],
+    events.DeletedCommentEvent: [do_nothing],
+    events.DeniedPostActionEvent: [handle_permission_denied],
+    events.DeniedCommentActionEvent: [handle_permission_denied],
 }
 
 COMMAND_HANDLERS = {
